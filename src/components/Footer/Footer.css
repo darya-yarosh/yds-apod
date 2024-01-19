@@ -1,0 +1,24 @@
+.Footer_wrapper {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1B1B1B;
+    color: #FFFFFF;
+
+    height: 54px;
+    font-size: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.Footer_author {
+    width: fit-content;
+    padding-left: 16px;
+}
+
+.Footer_api {
+    padding-right: 16px;
+    width: fit-content;
+    color: #FFFFFF;
+}
