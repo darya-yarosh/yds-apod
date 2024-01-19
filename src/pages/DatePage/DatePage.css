@@ -1,0 +1,101 @@
+.DatePage_wrapper {
+    height: 100%;
+    display: flex;
+    flex-grow: 3;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.DatePage_body {
+    display: grid;
+    gap: 48px;
+    padding: 0px 48px;
+    animation: 1s show ease;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    grid-template-areas:
+        "dateInfo"
+        "weekList";
+}
+
+.SelectedDateInfo {
+    grid-area: dateInfo;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex-direction: row;
+    gap: 32px;
+    max-height: 712px;
+    margin: 16px 0px;
+    align-items: center;
+}
+
+.Date_PictureInfo {}
+
+.Date_TextInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    margin: 40px 0px;
+}
+
+.Date_TextInfo header,
+p {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: start;
+}
+
+.Date_TextInfo header {
+    gap: 8px;
+}
+
+.Date_title {
+    font-size: 3rem;
+}
+
+.Date_copyright {
+    font-size: 2.5rem;
+    font-weight: normal;
+}
+
+.Date_explanation {
+    font-size: 1.5rem;
+}
+
+.WeekDateInfo {
+    grid-area: weekList;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 16px 0px;
+}
+
+.DatePage_wrapper .PictureGrid_wrapper {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr !important;
+}
+
+@media screen and (max-width: 1024px) {
+    .Date_title {
+        font-size: 2rem;
+    }
+
+    .Date_copyright {
+        font-size: 1.5rem;
+    }
+
+    .Date_explanation {
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    .SelectedDateInfo {
+        grid-template-columns: 1fr;
+    }
+}
