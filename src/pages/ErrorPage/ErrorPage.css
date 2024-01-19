@@ -1,0 +1,41 @@
+.ErrorPage_wrapper {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ErrorPage_body {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    margin: auto;
+    width: fit-content;
+    padding: 0px 48px;
+}
+
+.ErrorPage_body header, nav {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.ErrorPage_body header {
+    font-size: 2rem;
+}
+
+.ErrorPage_body nav button {
+    font-size: 1.5rem;
+    padding: 4px;
+
+    cursor: pointer;
+    border-radius: 4px;
+    border-style: outset;
+    border-width: 1px;
+    border-color: #ffffff;
+    background: #FFFFFF;
+}
+
+.ErrorPage_body nav button:hover {
+    border-color: #8d8d8d;
+}
