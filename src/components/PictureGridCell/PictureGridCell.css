@@ -1,0 +1,10 @@
+.PictureGridCell_wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+@media screen and (max-height: 768px) {
+    .PictureGridCell_wrapper {
+        width: 50px;
+    }
+}

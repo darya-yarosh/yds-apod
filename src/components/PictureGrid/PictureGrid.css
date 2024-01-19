@@ -1,0 +1,6 @@
+.PictureGrid_wrapper {
+    display: grid;
+    gap: 16px;
+
+    max-height: calc(128px*5 + 16px*4);
+}
