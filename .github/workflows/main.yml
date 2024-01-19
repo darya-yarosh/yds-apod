@@ -8,6 +8,9 @@
       DEPLOY_PACKAGE_NAME: "deploy-ver-${{ github.sha }}"
     
     on:
+      push: 
+        branches:
+          - master
       pull_request:
         branches:
           - master
