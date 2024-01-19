@@ -1,0 +1,160 @@
+.Header_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: space-evenly;
+    padding: 8px 16px;
+    align-items: center;
+    background-color: #1B1B1B;
+    color: #FFFFFF;
+    font-size: 1rem;
+    height: 80px;
+    grid-template-areas:
+        "state appName pages"
+}
+
+.Header_state {
+    grid-area: state;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.Header_periodSelector {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.Header_periodSelector section {
+    display: flex;
+}
+
+.Header_periodSelector button,
+input {
+    cursor: pointer;
+    border-radius: 4px;
+    border-style: outset;
+    border-color: #ffffff;
+    background: #FFFFFF;
+}
+
+.Header_periodSelector button:hover,
+input:hover {
+    border-color: #8d8d8d;
+}
+
+.Header_appName {
+    grid-area: appName;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+}
+
+.Header_appName :first-child {
+    font-size: 2rem;
+}
+
+.Header_pagesSelector {
+    grid-area: pages;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.Header_pagesSelector label {
+    font-weight: bold;
+}
+
+.Header_pagesSelector select {
+    font-size: 1rem;
+    border-radius: 4px;
+    border-style: outset;
+    border-color: #ffffff;
+    padding: 4px 4px;
+
+    background: none;
+    border: none;
+    color: #ffffff;
+    text-decoration: underline;
+    border: 1px solid #1B1B1B;
+}
+
+.Header_pagesSelector select:hover {
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+}
+
+.Header_pagesSelector select option {
+    color: #ffffff;
+    background-color: #1B1B1B;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .Header_wrapper {
+        padding: 16px;
+    }
+    .Header_state {
+        width: fit-content;
+    }
+    .Header_periodSelector {
+        flex-direction: column;
+    }
+    .Header_periodSelector input {
+        width: 50%;
+    }
+}
+
+@media screen and (min-width: 425px) and (max-width: 767px) {
+    .Header_wrapper {
+        gap: 12px;
+        padding: 16px;
+        grid-template-columns: 1fr 1fr;
+
+        justify-items: center;
+        height: fit-content;
+
+        grid-template-areas:
+        "appName appName"
+        "pages state"
+    }
+    .Header_pagesSelector {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-self: flex-start;
+    }
+    .Header_pagesSelector label {
+        padding: 8px;
+    }
+    .Header_periodSelector section {
+        display: flex;
+    }
+    .Header_state {
+        place-self: flex-end;
+    }
+    .Header_periodSelector {
+        flex-direction: column;
+    }
+}
+
+@media screen and (min-width: 300px) and (max-width: 424px) {
+    .Header_wrapper {
+        gap: 12px;
+        padding: 16px;
+        grid-template-columns: 1fr 1fr;
+
+        justify-items: center;
+        height: fit-content;
+
+        grid-template-areas:
+        "appName appName"
+        "pages pages"
+        "state state"
+    }
+    .Header_pagesSelector {
+        flex-direction: row;
+        justify-self: center;
+    }
+}
