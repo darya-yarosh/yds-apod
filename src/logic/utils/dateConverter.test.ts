@@ -17,8 +17,10 @@ describe('Date converter Module', () => {
     });
 
     test('Get today date with America UTC', () => {
+        let options = { timeZone: 'Europe/Minsk' };
+        let BelarusTime = new Date().toLocaleString('en-US', options);
         const todayDate = new Date(
-            new Date()
+            new Date(BelarusTime)
                 .getTime() - 7 * 60 * 60 * 1000
         )
         const convertedTodayDate = dateConverter.convertDateToYYYYMMDD(todayDate, '.')
