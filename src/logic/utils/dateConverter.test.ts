@@ -82,14 +82,24 @@ describe('Date converter Module', () => {
         ])).toBe(true);
 
         expect(dateConverter.checkIsPeriodCorrect([
-            LIMITS.minDate,
-            LIMITS.maxDate
+            new Date(LIMITS.minDateStr),
+            new Date(LIMITS.maxDateStr)
         ])).toBe(true);
 
         expect(dateConverter.checkIsPeriodCorrect([
             LIMITS.maxDate,
             LIMITS.minDate
         ])).toBe(false);
+
+        expect(dateConverter.checkIsPeriodCorrect([
+            new Date(2024,0,12),
+            new Date(2024,0,10)
+        ])).toBe(false);
+
+        expect(dateConverter.checkIsPeriodCorrect([
+            new Date(2024,0,10),
+            new Date(2024,0,12)
+        ])).toBe(true);
     });
 
     test('Fix period to correct limits', () => {
