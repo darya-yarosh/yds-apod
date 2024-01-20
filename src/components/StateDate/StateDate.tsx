@@ -3,18 +3,18 @@ import { useNavigate, useParams } from "react-router";
 
 import LIMITS from "models/limits";
 
-import { convertDateToYYYYMMDD, getTodayDate } from "logic/utils/dateConverter";
+import { convertDateToYYYYMMDD, getTodayUTCDate } from "logic/utils/dateConverter";
 
 export default function StateDate() {
     const navigate = useNavigate();
     const params = useParams();
 
-    const todayDate = convertDateToYYYYMMDD(getTodayDate(), '-');
+    const todayDate = convertDateToYYYYMMDD(getTodayUTCDate(), '-');
     const date = useMemo(() => params.date
         || todayDate, [params.date, todayDate]);
 
     function dateOnChange(event: React.ChangeEvent<HTMLInputElement>) {
-        if (date < LIMITS.minDate || date > LIMITS.maxDate) {
+        if (date < LIMITS.minDateStr || date > LIMITS.maxDateStr) {
             event.preventDefault();
             window.alert(`Invalid date: date should be in range ${LIMITS.minDate}-${LIMITS.maxDate}.`)
             return;
@@ -28,8 +28,8 @@ export default function StateDate() {
         <p>Date: {date}</p>
         <input
             type="date"
-            min={LIMITS.minDate}
-            max={LIMITS.maxDate}
+            min={LIMITS.minDateStr}
+            max={LIMITS.maxDateStr}
             title={"Selected date"}
             value={date}
             onChange={dateOnChange}

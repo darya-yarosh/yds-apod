@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import StateDate from 'components/StateDate/StateDate';
 import StatePeriod from 'components/StatePeriod/StatePeriod';
 
-import { convertDateToYYYYMMDD, getTodayDate } from 'logic/utils/dateConverter';
+import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverter';
 
 import './Header.css';
 
@@ -21,11 +21,11 @@ export default function Header() {
 
     const optionsValue = [
         [
-            `/date/${convertDateToYYYYMMDD(getTodayDate(), '-')}`,
-            'Date'
+            `/date/${convertDateToYYYYMMDD(getTodayUTCDate(), '-')}`,
+            'Single'
         ],
         [
-            `/period/${convertDateToYYYYMMDD(getTodayDate(), '.')}-${convertDateToYYYYMMDD(getTodayDate(), '.')}`,
+            `/period/${convertDateToYYYYMMDD(getTodayUTCDate(), '.')}-${convertDateToYYYYMMDD(getTodayUTCDate(), '.')}`,
             'Period'
         ]
     ]
@@ -46,7 +46,7 @@ export default function Header() {
         <section className="Header_pagesSelector">
             {(isDate || isPeriod) &&
                 <>
-                    <label>Page: </label>
+                    <label>Date: </label>
                     <select
                         title='Page'
                         onChange={onNavigate}

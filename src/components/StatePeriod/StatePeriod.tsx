@@ -15,7 +15,7 @@ export default function StatePeriod() {
     )
 
     function sendPeriod() {
-        if (period[0] < LIMITS.minDate || period[1] > LIMITS.maxDate) {
+        if (period[0] < LIMITS.minDateStr || period[1] > LIMITS.maxDateStr) {
             window.alert(`Invalid period date: period should be in range ${LIMITS.minDate}-${LIMITS.maxDate}.`)
             return;
         }
@@ -32,8 +32,8 @@ export default function StatePeriod() {
             <section>
                 <input
                     type="date"
-                    min={LIMITS.minDate}
-                    max={LIMITS.maxDate}
+                    min={LIMITS.minDateStr}
+                    max={LIMITS.maxDateStr}
                     title={"Start period date"}
                     value={period[0]}
                     onChange={(event) => setPeriod([event.target.value, period[1]])}
@@ -41,14 +41,14 @@ export default function StatePeriod() {
                 <span>-</span>
                 <input
                     type="date"
-                    min={LIMITS.minDate}
-                    max={LIMITS.maxDate}
+                    min={LIMITS.minDateStr}
+                    max={LIMITS.maxDateStr}
                     title={"End period date"}
                     value={period[1]}
                     onChange={(event) => setPeriod([period[0], event.target.value])}
                 />
             </section>
-            <button onClick={sendPeriod}>SEND</button>
+            <button onClick={sendPeriod}>SHOW</button>
         </div>
     </>
 }

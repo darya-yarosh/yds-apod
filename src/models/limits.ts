@@ -1,8 +1,10 @@
-import { convertDateToYYYYMMDD, getTodayDate } from "logic/utils/dateConverter";
+import { convertDateToYYYYMMDD, getTodayUTCDate } from "logic/utils/dateConverter";
 
 const LIMITS = {
-    minDate: "1995-06-16",
-    maxDate: convertDateToYYYYMMDD(getTodayDate(), '-'),
+    minDateStr: "1995-06-16",
+    minDate: new Date(new Date("1995-06-16").toLocaleString('en-US', { timeZone: 'America/New_York' })),
+    maxDateStr: convertDateToYYYYMMDD(getTodayUTCDate(), '-'),
+    maxDate: new Date(getTodayUTCDate()),
 }
 
 export default LIMITS;

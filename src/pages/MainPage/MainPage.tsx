@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom"
 
 import Loader from "components/Loader/Loader";
 
-import { convertDateToYYYYMMDD, getTodayDate } from "logic/utils/dateConverter";
+import { convertDateToYYYYMMDD, getTodayUTCDate } from "logic/utils/dateConverter";
 
 export default function MainPage() {
     const navigate = useNavigate();
 
-    const todayDate = convertDateToYYYYMMDD(getTodayDate(), '-');
+    const todayDate = convertDateToYYYYMMDD(getTodayUTCDate(), '-');
 
     useEffect(() => {
         navigate(`/date/${todayDate}`)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return <Loader />
