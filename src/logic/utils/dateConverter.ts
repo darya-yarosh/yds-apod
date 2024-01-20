@@ -23,7 +23,11 @@ export function getTodayUTCDate() {
 }
 
 export function checkIsDateCorrect(date: Date) {
-    return (LIMITS.minDate <= date && date <= LIMITS.maxDate)
+    const currentDate = new Date(convertDateToYYYYMMDD(date, '-'));
+    const maxDate = new Date(LIMITS.maxDateStr);
+    const minDate = new Date(LIMITS.minDateStr);
+
+    return (minDate <= currentDate && currentDate <= maxDate)
         ? true
         : false;
 }
