@@ -7,8 +7,8 @@
     background-color: #1B1B1B;
     color: #FFFFFF;
 
-    height: 54px;
-    font-size: 1.5rem;
+    min-height: 54px;
+    max-height: 54px;
     font-size: 1.2rem;
 }
 

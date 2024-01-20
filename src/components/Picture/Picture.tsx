@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react';
+
 import './Picture.css';
 
 interface PictureProps {
@@ -17,7 +19,7 @@ export default function Picture({
     isCover,
     onClick
 }: PictureProps) {
-    const stylesCover = {
+    const stylesCover: CSSProperties = {
         'maxHeight': height,
         'maxWidth': width,
         'objectFit': 'cover',
@@ -25,26 +27,20 @@ export default function Picture({
         'minHeight': `${height}px`,
     }
 
-    const stylesUncover = {
-        'maxHeight': height,
-    }
-
     return (
         <div
             className="Picture_wrapper"
-            style={{
-                maxHeight: height,
-            }}
         >
             <img
                 src={src}
                 title={alt}
                 alt={alt}
                 onClick={onClick}
-                className={onClick !== undefined 
-                    ? "Picture_img Picture_imgHovered" 
+                className={onClick !== undefined
+                    ? "Picture_img Picture_imgHovered"
                     : "Picture_img"}
-                style={isCover ? stylesCover : stylesUncover}
+
+                style={isCover ? stylesCover : undefined}
             />
         </div>
     )

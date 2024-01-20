@@ -1,10 +1,9 @@
 .PeriodPage_wrapper {
-    min-height: 100vh;
-    max-height: fit-content;
+    height: 100%;
     display: flex;
-    background: inherit;
     flex-direction: column;
     justify-content: space-between;
+    margin: auto;
 }
 
 .PeriodPage_body {
@@ -14,7 +13,6 @@
     gap: 48px;
     padding: 48px;
     animation: 1s show ease;
-    margin-bottom: 80px;
     align-items: center;
 }
 
@@ -24,7 +22,7 @@
 
 .PeriodPage_wrapper .PictureGrid_wrapper {
     overflow: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 @media screen and (max-height: 768px) {
@@ -37,19 +35,5 @@
 @media screen and (max-width: 768px) {
     .PeriodPage_body {
         padding: 24px;
-    }
-}
-
-@media screen and (max-height: 768px) {
-    .PeriodPage_wrapper .PictureGrid_wrapper {
-        width: 80vw;
-        height: 80vh;
-    }
-}
-
-@media screen and (max-width: 1024px) {
-    .PeriodPage_wrapper .PictureGrid_wrapper {
-        width: 80vw;
-        padding: 0px 8px 0px 16px !important;
     }
 }

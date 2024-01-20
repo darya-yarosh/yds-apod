@@ -1,12 +1,17 @@
 .Picture_wrapper {
     display: flex;
     margin: auto;
+    max-height: 712px;
+    max-width: 712px;
+    width: 100%;
+    height: 100%;
+    justify-content: center
 }
 
 .Picture_img {
-    max-height: 712px;
+    object-fit: contain;
+    height: auto;
     max-width: 100%;
-    margin: auto;
     border-radius: 12px;
 
     filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 0.25));
@@ -16,8 +21,4 @@
 .Picture_imgHovered:hover {
     filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 0.5));
     cursor: pointer;
-}
-
-@media screen and (max-width: 1024px) {
-    .Picture_img {}
 }

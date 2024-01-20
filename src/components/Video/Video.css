@@ -1,5 +1,21 @@
-.Video_wrapper iframe{
-    border:  none;
+.Video_wrapper {
+    display: flex;
+    margin: auto;
+    max-height: 712px;
+    max-width: 712px;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    position: relative;
+    aspect-ratio: 16/9;
+}
+
+.Video_wrapper iframe {
+    object-fit: contain;
+    height: auto;
+    max-width: 100%;
+
+    border: none;
     border-radius: 12px;
     filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 0.25));
 }

@@ -1,6 +1,8 @@
 .PictureGrid_wrapper {
     display: grid;
     gap: 16px;
-
-    max-height: calc(128px*5 + 16px*4);
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    max-height: calc(128px*4 + 16px*3);
+    padding: 16px;
+    width: 100%;
 }
