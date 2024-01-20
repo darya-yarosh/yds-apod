@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
-import { DateInfo } from "models/dateInfo";
+import { AstroPicData } from "models/astroPicData";
 
 import Video from "components/Video/Video";
 import Loader from "components/Loader/Loader";
@@ -9,39 +9,56 @@ import Picture from "components/Picture/Picture";
 import PictureGrid from "components/PictureGrid/PictureGrid";
 
 import ApiController from "logic/storage/ApiController";
-import { convertDateToYYYYMMDD } from "logic/utils/dateConverter";
+import { checkIsDateCorrect, checkIsPeriodCorrect, convertDateToYYYYMMDD, fixToCorrectDate } from "logic/utils/dateConverter";
 
 import './DatePage.css';
 
 export default function DatePage() {
+    const navigate = useNavigate();
     const params = useParams();
 
-    const [data, setData] = useState<DateInfo>();
-    const [weekData, setWeekData] = useState<DateInfo[]>([]);
+    const [data, setData] = useState<AstroPicData>();
+    const [weekData, setWeekData] = useState<AstroPicData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const selectedDate = useMemo(() => params.date || '', [params.date]);
 
     useEffect(() => {
         setIsLoading(true);
-        ApiController.getDateData(selectedDate)
-            .then(loadedData => {
-                setData(loadedData)
-            })
+        function goToCorrectDate() {
+            const fixedDate = convertDateToYYYYMMDD(fixToCorrectDate(new Date(selectedDate)), '-');
+            navigate(`/date/${fixedDate}`)
+        }
 
-        const dayWeekAgo = convertDateToYYYYMMDD(
-            new Date(new Date(selectedDate).getTime() - 7 * 24 * 60 * 60 * 1000),
-            '-'
-        )
-        const tomorrow = convertDateToYYYYMMDD(
-            new Date(new Date(selectedDate).getTime() - 1 * 24 * 60 * 60 * 1000),
-            '-'
-        )
-        ApiController.getPeriodData(dayWeekAgo, tomorrow)
-            .then(
-                loadedWeekData => {
-                    setWeekData(loadedWeekData);
-                    setIsLoading(false);
-                });
+        const isCorrectDate = checkIsDateCorrect(new Date(selectedDate));
+        if (!isCorrectDate) {
+            goToCorrectDate()
+        } else {
+            ApiController.getDateData(new Date(selectedDate))
+                .then(loadedData => {
+                    setData(loadedData)
+                })
+                .catch(() => {
+                    goToCorrectDate()
+                })
+        }
+
+        const dayWeekAgo = new Date(new Date(selectedDate).getTime() - 7 * 24 * 60 * 60 * 1000);
+        const yesterday = new Date(new Date(selectedDate).getTime() - 1 * 24 * 60 * 60 * 1000);
+
+        const isCorrectPeriod = checkIsPeriodCorrect([dayWeekAgo, yesterday]);
+        if (!isCorrectPeriod) {
+            goToCorrectDate()
+        } else {
+            ApiController.getPeriodData(dayWeekAgo, yesterday)
+                .then(
+                    loadedWeekData => {
+                        setWeekData(loadedWeekData);
+                        setIsLoading(false);
+                    })
+                .catch(() => {
+                    goToCorrectDate()
+                })
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params])
 
@@ -83,8 +100,6 @@ export default function DatePage() {
                 <div className="WeekDateInfo">
                     <PictureGrid
                         dates={weekData}
-                        rows={1}
-                        columns={7}
                         cellHeight={72}
                         cellWidth={72}
                     />

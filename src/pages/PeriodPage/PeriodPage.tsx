@@ -1,28 +1,26 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router"
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { DateInfo } from "models/dateInfo";
+import { AstroPicData } from "models/astroPicData";
 
 import Loader from "components/Loader/Loader";
 import PictureGrid from "components/PictureGrid/PictureGrid";
 
 import ApiController from "logic/storage/ApiController";
+import { 
+    checkIsPeriodCorrect, 
+    convertDateToYYYYMMDD, 
+    fixToCorrectPeriod
+} from "logic/utils/dateConverter";
 
 import './PeriodPage.css';
 
 export default function PeriodPage() {
+    const navigate = useNavigate();
     const params = useParams();
-    const [dataList, setDataList] = useState<DateInfo[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const rows = useMemo(() =>
-        Math.floor(dataList.length / 7)
-        , [dataList]
-    )
-    const columns = useMemo(() =>
-        dataList.length > 7 ? 7 : dataList.length
-        , [dataList]
-    )
+    const [dataList, setDataList] = useState<AstroPicData[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         setIsLoading(true)
@@ -31,12 +29,39 @@ export default function PeriodPage() {
             .map(stringDate => stringDate.replaceAll('.', '-'))
             || ['0000-00-00', '0000-00-00']
 
-        ApiController.getPeriodData(period[0], period[1]).then(
-            loadedWeekData => {
-                setDataList(loadedWeekData);
-                setIsLoading(false);
-            }
-        )
+        function goToCorrectPeriod() {
+
+            const fixedPeriod = fixToCorrectPeriod(
+                period.map((date: string) => new Date(date))
+            ).map(date =>
+                convertDateToYYYYMMDD(new Date(date), '.')
+            )
+
+            navigate(`/period/${fixedPeriod[0]}-${fixedPeriod[1]}`)
+        }
+
+        const isCorrectPeriod = checkIsPeriodCorrect(
+            [
+                new Date(period[0]),
+                new Date(period[1])
+            ]
+        );
+
+        if (!isCorrectPeriod) {
+            goToCorrectPeriod()
+        } else {
+            ApiController.getPeriodData(new Date(period[0]), new Date(period[1]))
+                .then(
+                    loadedWeekData => {
+                        setDataList(loadedWeekData);
+                        setIsLoading(false);
+                    }
+                )
+                .catch(() => {
+                    goToCorrectPeriod()
+                });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params]);
 
     return <div className="PeriodPage_wrapper">
@@ -52,8 +77,6 @@ export default function PeriodPage() {
                 </header>
                 <PictureGrid
                     dates={dataList}
-                    rows={rows}
-                    columns={columns}
                     cellHeight={128}
                     cellWidth={128}
                 />

@@ -1,4 +1,4 @@
-export interface DateInfo {
+export interface AstroPicData {
     copyright: string,
     date: string,
     explanation: string,

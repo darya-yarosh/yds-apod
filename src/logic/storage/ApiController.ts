@@ -1,9 +1,22 @@
-import { DateInfo } from "models/dateInfo";
+import { AstroPicData } from "models/astroPicData";
+
+import {
+    checkIsDateCorrect,
+    checkIsPeriodCorrect,
+    convertDateToYYYYMMDD
+} from "logic/utils/dateConverter";
 
 const USER_API_KEY = 'UHPJgePVbrUaaBOhRaDalhfpEGF0rMtEIOu0mjgb';
 
 const API_CONTROLLER = {
-    getDateData: async function getDateData(convertedDate: String) {
+    getDateData: async function getDateData(date: Date) {
+        const isCorrectDate = checkIsDateCorrect(date)
+        if (!isCorrectDate) {
+            throw new Error('Invalid date');
+        }
+
+        const convertedDate = convertDateToYYYYMMDD((date), '-');
+
         const requestOptions: RequestInit = {
             method: 'GET',
             redirect: 'follow',
@@ -15,8 +28,10 @@ const API_CONTROLLER = {
 
         const apiUrl = await fetch(url, requestOptions);
         const data = await apiUrl.json();
-
-        const dateData: DateInfo = {
+        if (apiUrl.status === 400) {
+            throw new Error('Invalid date');
+        }
+        const dateData: AstroPicData = {
             copyright: data.copyright,
             date: data.date,
             explanation: data.explanation,
@@ -30,9 +45,18 @@ const API_CONTROLLER = {
         return dateData;
     },
     getPeriodData: async function getPeriodData(
-        convertedStartDate: string,
-        convertedEndDate: string
+        startDate: Date,
+        endDate: Date
     ) {
+        const isCorrectPeriod = checkIsPeriodCorrect([startDate, endDate])
+        const convertedPeriod = [
+            convertDateToYYYYMMDD(startDate, '-'),
+            convertDateToYYYYMMDD(endDate, '-')
+        ]
+        if (!isCorrectPeriod) {
+            throw new Error('Invalid period');
+        }
+
         const requestOptions: RequestInit = {
             method: 'GET',
             redirect: 'follow',
@@ -42,15 +66,15 @@ const API_CONTROLLER = {
         const apiKey = `api_key=${USER_API_KEY}`;
         const url = mainUrl
             + apiKey
-            + `&start_date=${convertedStartDate}`
-            + `&end_date=${convertedEndDate}`
+            + `&start_date=${convertedPeriod[0]}`
+            + `&end_date=${convertedPeriod[1]}`
             + `&hd=false`;
 
         const apiUrl = await fetch(url, requestOptions);
         const dataList = await apiUrl.json();
 
-        const dateDataList: DateInfo[] = dataList.map((data: any) => {
-            const newData: DateInfo = {
+        const dateDataList: AstroPicData[] = dataList.map((data: any) => {
+            const newData: AstroPicData = {
                 copyright: data.copyright,
                 date: data.date,
                 explanation: data.explanation,
