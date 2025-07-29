@@ -1,8 +1,5 @@
 import { useNavigate } from 'react-router';
 
-import Header from 'components/Header/Header';
-import Footer from 'components/Footer/Footer';
-
 import './ErrorPage.css';
 
 export default function ErrorPage() {
