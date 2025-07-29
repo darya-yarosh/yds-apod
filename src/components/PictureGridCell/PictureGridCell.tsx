@@ -41,6 +41,10 @@ export default function PictureGridCell({
 }
 
 function getVideoThumbnail(url: string) {
+    if (!url) {
+        return "/";
+    }
+
     const splitterUrl = url.split('/');
     const videoId = splitterUrl[splitterUrl.length - 1].split('?')[0];
     const videoThumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`
