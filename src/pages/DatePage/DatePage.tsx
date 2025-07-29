@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 
 import { AstroPicData } from "models/astroPicData";
@@ -21,6 +21,40 @@ export default function DatePage() {
     const [weekData, setWeekData] = useState<AstroPicData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const selectedDate = useMemo(() => params.date || '', [params.date]);
+
+    const renderMedia = useCallback(() => {
+        if (data?.media_type === "image") {
+            return (
+                <Picture
+                    src={data?.url || ""}
+                    alt={`Image of ${data?.title}`}
+                    height={712}
+                    width={712}
+                    isCover={false}
+                />
+            );
+        } else if (data?.media_type === "video") {
+            return (
+                <Video
+                    src={data?.url || ""}
+                    title={data?.title}
+                    height={712}
+                    width={712}
+                    withControls={true}
+                />
+            );
+        } else {
+            return (
+                <Picture
+                    src={""}
+                    alt={`Has not image`}
+                    height={712}
+                    width={712}
+                    isCover={false}
+                />
+            );
+        }
+    }, [data]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -70,24 +104,7 @@ export default function DatePage() {
             <div className="DatePage_body">
                 <div className="SelectedDateInfo">
                     <section className="Date_PictureInfo">
-                        {data?.media_type === "image" &&
-                            <Picture
-                                src={data?.url || ""}
-                                alt={`Image of ${data?.title}`}
-                                height={712}
-                                width={712}
-                                isCover={false}
-                            />
-                        }
-                        {data?.media_type === "video" &&
-                            <Video
-                                src={data?.url || ""}
-                                title={data?.title}
-                                height={712}
-                                width={712}
-                                withControls={true}
-                            />
-                        }
+                        {renderMedia()}
                     </section>
                     <section className="Date_TextInfo">
                         <header>
