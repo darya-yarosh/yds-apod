@@ -14,6 +14,7 @@ export default function ErrorPage() {
                 <header>
                     <h1>Something went wrong.</h1>
                     <p>Current address is invalid.</p>
+                    <p>Try changing the date or follow these steps.</p>
                 </header>
                 <nav>
                     <button onClick={() => navigate(-1)}>Go to previous page</button>
