@@ -1,4 +1,6 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useCallback } from 'react';
+
+import noImage from "../../assets/noimage.png";
 
 import './Picture.css';
 
@@ -27,20 +29,25 @@ export default function Picture({
         'minHeight': `${height}px`,
     }
 
+    const onError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+        e.currentTarget.onerror = null; // отключаем повтор
+        e.currentTarget.src = noImage;
+    }, []);
+
     return (
         <div
             className="Picture_wrapper"
         >
             <img
-                src={src}
-                title={alt}
                 alt={alt}
-                onClick={onClick}
                 className={onClick !== undefined
                     ? "Picture_img Picture_imgHovered"
                     : "Picture_img"}
-
+                src={src}
                 style={isCover ? stylesCover : undefined}
+                title={alt}
+                onClick={onClick}
+                onError={onError}
             />
         </div>
     )
