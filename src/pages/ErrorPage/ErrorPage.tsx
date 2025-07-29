@@ -9,7 +9,6 @@ export default function ErrorPage() {
     const navigate = useNavigate();
 
     return <>
-        <Header />
         <div className="ErrorPage_wrapper">
             <div className="ErrorPage_body">
                 <header>
@@ -22,6 +21,5 @@ export default function ErrorPage() {
                 </nav>
             </div>
         </div>
-        <Footer />
     </>
 }
