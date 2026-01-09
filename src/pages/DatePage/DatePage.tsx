@@ -9,19 +9,27 @@ import Picture from "components/Picture/Picture";
 import PictureGrid from "components/PictureGrid/PictureGrid";
 
 import ApiController from "logic/storage/ApiController";
-import { checkIsDateCorrect, checkIsPeriodCorrect, convertDateToYYYYMMDD, fixToCorrectDate } from "logic/utils/dateConverter";
+import { checkIsDateCorrect, checkIsPeriodCorrect } from "logic/utils/dateConverter";
 
 import './DatePage.css';
+import { goToCorrectDate } from "./utils";
 
 export default function DatePage() {
     const navigate = useNavigate();
     const params = useParams();
 
+    /**
+     * State
+     */
     const [data, setData] = useState<AstroPicData>();
     const [weekData, setWeekData] = useState<AstroPicData[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const selectedDate = useMemo(() => params.date || '', [params.date]);
 
+    /**
+     * Renders
+     */
     const renderMedia = useCallback(() => {
         if (data?.media_type === "image") {
             return (
@@ -33,7 +41,9 @@ export default function DatePage() {
                     isCover={false}
                 />
             );
-        } else if (data?.media_type === "video") {
+        }
+
+        if (data?.media_type === "video") {
             return (
                 <Video
                     src={data?.url || ""}
@@ -43,64 +53,25 @@ export default function DatePage() {
                     withControls={true}
                 />
             );
-        } else {
-            return (
-                <Picture
-                    src={""}
-                    alt={`Has not image`}
-                    height={712}
-                    width={712}
-                    isCover={false}
-                />
-            );
         }
+
+        return (
+            <Picture
+                src={""}
+                alt={`Has not image`}
+                height={712}
+                width={712}
+                isCover={false}
+            />
+        );
     }, [data]);
 
-    useEffect(() => {
-        setIsLoading(true);
-        function goToCorrectDate() {
-            const fixedDate = convertDateToYYYYMMDD(fixToCorrectDate(new Date(selectedDate)), '-');
-            navigate(`/date/${fixedDate}`)
+    const renderContent = useCallback(() => {
+        if (isLoading) {
+            return <Loader  />;
         }
 
-        const isCorrectDate = checkIsDateCorrect(new Date(selectedDate));
-        if (!isCorrectDate) {
-            goToCorrectDate()
-        } else {
-            ApiController.getDateData(new Date(selectedDate))
-                .then(loadedData => {
-                    setData(loadedData)
-                })
-                .catch(() => {
-                    goToCorrectDate()
-                })
-        }
-
-        const dayWeekAgo = new Date(new Date(selectedDate).getTime() - 7 * 24 * 60 * 60 * 1000);
-        const yesterday = new Date(new Date(selectedDate).getTime() - 1 * 24 * 60 * 60 * 1000);
-
-        const isCorrectPeriod = checkIsPeriodCorrect([dayWeekAgo, yesterday]);
-        if (!isCorrectPeriod) {
-            goToCorrectDate()
-        } else {
-            ApiController.getPeriodData(dayWeekAgo, yesterday)
-                .then(
-                    loadedWeekData => {
-                        setWeekData(loadedWeekData);
-                        setIsLoading(false);
-                    })
-                .catch(() => {
-                    goToCorrectDate()
-                })
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params])
-
-    return <div className="DatePage_wrapper">
-        {isLoading &&
-            <Loader />
-        }
-        {!isLoading &&
+        return (
             <div className="DatePage_body">
                 <div className="SelectedDateInfo">
                     <section className="Date_PictureInfo">
@@ -122,6 +93,95 @@ export default function DatePage() {
                     />
                 </div>
             </div>
+        );
+    }, [isLoading, data, weekData, renderMedia]);
+
+    /**
+     * Handlers
+     */
+    const handleGetDate = useCallback(async () => {
+        const isCorrectDate = checkIsDateCorrect(new Date(selectedDate));
+
+        if (!isCorrectDate) {
+            goToCorrectDate(selectedDate, navigate);
+            return;
         }
-    </div>
+
+        await ApiController.getDateData(new Date(selectedDate))
+            .then((loadedData) => {
+                setData(loadedData)
+            })
+            .catch(() => {
+                goToCorrectDate(selectedDate, navigate);
+            })
+    }, [selectedDate, navigate]);
+
+    const handleGetPeriod = useCallback(async () => {
+        const dayWeekAgo = new Date(new Date(selectedDate).getTime() - 7 * 24 * 60 * 60 * 1000);
+        const yesterday = new Date(new Date(selectedDate).getTime() - 1 * 24 * 60 * 60 * 1000);
+
+        const isCorrectPeriod = checkIsPeriodCorrect([dayWeekAgo, yesterday]);
+        if (!isCorrectPeriod) {
+            goToCorrectDate(selectedDate, navigate);
+            return;
+        }
+
+        await ApiController.getPeriodData(dayWeekAgo, yesterday)
+            .then(
+                loadedWeekData => {
+                    setWeekData(loadedWeekData);
+                })
+            .catch((error: Error) => {
+                const { message } = error;
+                const errorCode = message ? message.split(":")[0] : null;
+
+                if (errorCode === "400") {
+                    navigate("/error/400", {
+                        "state": {
+                            message: "Invalid date"
+                        }
+                    });
+                    // goToCorrectDate();
+                }  else if (errorCode === "429") {
+                    navigate("/error/429", {
+                        "state": {
+                            message: "Too many requests"
+                        }
+                    });
+                } else if (errorCode === "504") {
+                    navigate("/error/504", {
+                        "state": {
+                            message: "Timeout gateway"
+                        }
+                    });
+                }
+            });
+    }, [selectedDate, navigate]);
+
+    const handleInit = useCallback(async () => {
+        if (isLoading) {
+            return;
+        }
+
+        setIsLoading(true);
+        await handleGetDate();
+        await handleGetPeriod();
+        setIsLoading(false);
+    }, [isLoading, handleGetDate, handleGetPeriod]);
+
+    /**
+     * Effects
+     */
+    useEffect(() => {
+        handleInit()
+    }, [
+        // selectedDate,
+        handleInit
+    ])
+
+    return (
+        <div className="DatePage_wrapper">
+            {renderContent()}
+        </div>
+    );
 }
