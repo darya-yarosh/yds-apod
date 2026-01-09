@@ -72,12 +72,8 @@ const API_CONTROLLER = {
             + `&hd=false`;
 
         const apiUrl = await fetch(url, requestOptions);
-        if (apiUrl.status === 400) {
-            throw new Error("400: Invalid date");
-        } else if (apiUrl.status === 429) {
-            throw new Error("429: Too many requests");
-        } else if (apiUrl.status === 504) {
-            throw new Error("504: Timeout gateway");
+        if (apiUrl.status < 200 || apiUrl.status > 299) {
+            throw new Error(apiUrl.status.toString());
         }
 
         const dataList = await apiUrl.json();
