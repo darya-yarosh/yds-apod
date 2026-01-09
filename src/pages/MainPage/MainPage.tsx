@@ -12,8 +12,7 @@ export default function MainPage() {
 
     useEffect(() => {
         navigate(`/date/${todayDate}`)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [todayDate, navigate])
 
     return <Loader />
 }
