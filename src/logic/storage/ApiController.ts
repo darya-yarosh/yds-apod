@@ -12,25 +12,26 @@ const API_CONTROLLER = {
     getDateData: async function getDateData(date: Date) {
         const isCorrectDate = checkIsDateCorrect(date)
         if (!isCorrectDate) {
-            throw new Error('Invalid date');
+            throw new Error("400: Invalid date");
         }
 
-        const convertedDate = convertDateToYYYYMMDD((date), '-');
+        const convertedDate = convertDateToYYYYMMDD((date), "-");
 
         const requestOptions: RequestInit = {
-            method: 'GET',
-            redirect: 'follow',
+            method: "GET",
+            redirect: "follow",
         };
 
-        const mainUrl = `https://api.nasa.gov/planetary/apod?`
+        const mainUrl = "https://api.nasa.gov/planetary/apod?"
         const apiKey = `api_key=${USER_API_KEY}`;
         const url = mainUrl + apiKey + `&date=${convertedDate}`;
 
         const apiUrl = await fetch(url, requestOptions);
         const data = await apiUrl.json();
-        if (apiUrl.status === 400) {
-            throw new Error('Invalid date');
+        if (apiUrl.status < 200 || apiUrl.status > 299) {
+            throw new Error(apiUrl.status.toString());
         }
+
         const dateData: AstroPicData = {
             copyright: data.copyright,
             date: data.date,
@@ -71,6 +72,14 @@ const API_CONTROLLER = {
             + `&hd=false`;
 
         const apiUrl = await fetch(url, requestOptions);
+        if (apiUrl.status === 400) {
+            throw new Error("400: Invalid date");
+        } else if (apiUrl.status === 429) {
+            throw new Error("429: Too many requests");
+        } else if (apiUrl.status === 504) {
+            throw new Error("504: Timeout gateway");
+        }
+
         const dataList = await apiUrl.json();
 
         const dateDataList: AstroPicData[] = dataList.map((data: any) => {
