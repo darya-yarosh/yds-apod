@@ -46,6 +46,15 @@ export const router = createBrowserRouter(
 					<ErrorPage />
 				}
 			/>,
+			<Route
+				path="error"
+				element={<ErrorPage />}
+				errorElement={<ErrorPage />}
+			/>
+			<Route
+				path="error/:error_code"
+				element={<ErrorPage />}
+			/>
 		</Route>,
 	])
 );
