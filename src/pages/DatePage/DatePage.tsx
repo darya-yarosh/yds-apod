@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 
+import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
 
 import Video from "components/Video/Video";
@@ -21,11 +22,11 @@ export default function DatePage() {
     /**
      * State
      */
-    const [data, setData] = useState<AstroPicData>();
+    const [data, setData] = useState<TOrNull<AstroPicData>>(null);
     const [weekData, setWeekData] = useState<AstroPicData[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const selectedDate = useMemo(() => params.date || '', [params.date]);
+    const [selectedDate, setSelectedDate] = useState(params.date || "");
 
     /**
      * Renders
@@ -99,30 +100,30 @@ export default function DatePage() {
     /**
      * Handlers
      */
-    const handleGetDate = useCallback(async () => {
-        const isCorrectDate = checkIsDateCorrect(new Date(selectedDate));
+    const handleGetDate = useCallback(async (date: string) => {
+        const isCorrectDate = checkIsDateCorrect(new Date(date));
 
         if (!isCorrectDate) {
-            goToCorrectDate(selectedDate, navigate);
+            goToCorrectDate(date, navigate);
             return;
         }
 
-        await ApiController.getDateData(new Date(selectedDate))
+        await ApiController.getDateData(new Date(date))
             .then((loadedData) => {
                 setData(loadedData)
             })
             .catch(() => {
-                goToCorrectDate(selectedDate, navigate);
+                goToCorrectDate(date, navigate);
             })
-    }, [selectedDate, navigate]);
+    }, [navigate]);
 
-    const handleGetPeriod = useCallback(async () => {
-        const dayWeekAgo = new Date(new Date(selectedDate).getTime() - 7 * 24 * 60 * 60 * 1000);
-        const yesterday = new Date(new Date(selectedDate).getTime() - 1 * 24 * 60 * 60 * 1000);
+    const handleGetPeriod = useCallback(async (date: string) => {
+        const dayWeekAgo = new Date(new Date(date).getTime() - 7 * 24 * 60 * 60 * 1000);
+        const yesterday = new Date(new Date(date).getTime() - 1 * 24 * 60 * 60 * 1000);
 
         const isCorrectPeriod = checkIsPeriodCorrect([dayWeekAgo, yesterday]);
         if (!isCorrectPeriod) {
-            goToCorrectDate(selectedDate, navigate);
+            goToCorrectDate(date, navigate);
             return;
         }
 
@@ -156,16 +157,16 @@ export default function DatePage() {
                     });
                 }
             });
-    }, [selectedDate, navigate]);
+    }, [navigate]);
 
-    const handleInit = useCallback(async () => {
+    const handleInit = useCallback(async (date: string) => {
         if (isLoading) {
             return;
         }
 
         setIsLoading(true);
-        await handleGetDate();
-        await handleGetPeriod();
+        await handleGetDate(date);
+        await handleGetPeriod(date);
         setIsLoading(false);
     }, [isLoading, handleGetDate, handleGetPeriod]);
 
@@ -173,9 +174,19 @@ export default function DatePage() {
      * Effects
      */
     useEffect(() => {
-        handleInit()
+        const currentDate = params.date;
+
+        const isDataNotLoaded = data === null && selectedDate;
+        const isDateUpdated = selectedDate !== currentDate;
+
+        if ((isDataNotLoaded || isDateUpdated) && currentDate) {
+            setSelectedDate(currentDate);
+            handleInit(currentDate)
+        }
     }, [
-        // selectedDate,
+        selectedDate,
+        data,
+        params,
         handleInit
     ])
 
