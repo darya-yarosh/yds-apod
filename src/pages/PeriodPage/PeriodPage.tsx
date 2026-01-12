@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
 
 import Loader from "components/Loader/Loader";
@@ -21,10 +22,10 @@ export default function PeriodPage() {
     /**
      * State
      */
-    const [dataList, setDataList] = useState<AstroPicData[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [dataList, setDataList] = useState<TOrNull<Array<AstroPicData>>>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const selectedPeriod = useMemo(() => params.period || '', [params.period]);
+    const [selectedPeriod, setSelectedPeriod] = useState(params.period || "");
 
     /**
      * Renders
@@ -32,6 +33,10 @@ export default function PeriodPage() {
     const renderContent = useCallback(() => {
         if (isLoading) {
             return <Loader />;
+        }
+
+        if (!dataList) {
+            return <span>{"Something went wrong."}</span>;
         }
 
         return (
@@ -53,26 +58,26 @@ export default function PeriodPage() {
     /**
      * Handlers
      */
-    const handleGetPeriod = useCallback(async () => {
-        const period = (
-            selectedPeriod
+    const handleGetPeriod = useCallback(async (period: string) => {
+        const formattedPeriod = (
+            period
                 ?.split('-')
                 .map(stringDate => stringDate.replaceAll('.', '-'))
             ) || ['0000-00-00', '0000-00-00'];
 
         const isCorrectPeriod = checkIsPeriodCorrect(
             [
-                new Date(period[0]),
-                new Date(period[1])
+                new Date(formattedPeriod[0]),
+                new Date(formattedPeriod[1])
             ]
         );
 
         if (!isCorrectPeriod) {
-            goToCorrectPeriod(period, navigate)
+            goToCorrectPeriod(formattedPeriod, navigate)
             return;
         }
 
-        await ApiController.getPeriodData(new Date(period[0]), new Date(period[1]))
+        await ApiController.getPeriodData(new Date(formattedPeriod[0]), new Date(formattedPeriod[1]))
             .then(
                 loadedWeekData => {
                     setDataList(loadedWeekData);
@@ -104,21 +109,31 @@ export default function PeriodPage() {
                     });
                 }
             });
-    }, [selectedPeriod, navigate]);
+    }, [navigate]);
 
-    const handleInit = useCallback(async () => {
+    const handleInit = useCallback(async (period: string) => {
         if (isLoading) {
             return;
         }
 
         setIsLoading(true);
-        await handleGetPeriod();
+        await handleGetPeriod(period);
         setIsLoading(false);
     }, [isLoading, handleGetPeriod]);
 
     useEffect(() => {
-        handleInit()
+        const currentPeriod = params.period;
+
+        const isDataNotLoaded = selectedPeriod && dataList === null;
+        const isPeriodUpdated = selectedPeriod !== currentPeriod;
+
+        if ((isDataNotLoaded || isPeriodUpdated) && currentPeriod) {
+            setSelectedPeriod(currentPeriod);
+            handleInit(currentPeriod)
+        }
     }, [
+        params,
+        dataList,
         selectedPeriod,
         handleInit
     ]);
