@@ -58,6 +58,8 @@ export default function Picture({
             return;
         }
 
+        const elementRef = ref.current;
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -73,14 +75,14 @@ export default function Picture({
             rootMargin: '100px', // The parameter for starting image loading 100px before it appears in the viewport
         });
 
-        observer.observe(ref.current);
+        observer.observe(elementRef);
 
         return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
+            if (elementRef) {
+                observer.unobserve(elementRef);
             }
         };
-    }, [withLazyLoading, src]);
+    }, [withLazyLoading, src, ref]);
 
     return (
         <div className={classes}>
