@@ -81,7 +81,7 @@ p {
 
 @media screen and (max-width: 1024px) {
     .DatePage_wrapper {
-        padding: 48px 72px;
+        padding: 48px 48px;
     }
 
     .SelectedDateInfo {
