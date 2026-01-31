@@ -27,7 +27,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
-        if (typeof window !== 'undefined' && isTMA()) {
+        if (Boolean(window) && isTMA()) {
             try {
                 // Инициализация SDK - теперь получаем весь объект
                 const tg = init();
@@ -90,6 +90,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
 
     return (
         <TelegramContext.Provider value={value}>
+            <span>{"tgProvider"}{!!telegram}{!!user}{!!isReady}{Boolean(window)}</span>
             {children}
         </TelegramContext.Provider>
     );
