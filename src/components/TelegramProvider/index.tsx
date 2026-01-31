@@ -90,7 +90,13 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
 
     return (
         <TelegramContext.Provider value={value}>
-            <span>{"tgProvider"}{!!telegram}{!!user}{!!isReady}{Boolean(window)}</span>
+            <div style={{"color": "white", "display": "flex", "flexDirection": "row", "width": "100%"}}>
+                <span>{"tgProvider"}</span>
+                <span>{Boolean(telegram)}</span>
+                <span>{Boolean(user)}</span>
+                <span>{Boolean(isReady)}</span>
+                <span>{Boolean(window)}</span>
+            </div>
             {children}
         </TelegramContext.Provider>
     );
