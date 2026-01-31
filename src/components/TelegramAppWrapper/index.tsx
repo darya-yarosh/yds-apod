@@ -8,6 +8,7 @@ import { TTelegramAppWrapper } from './types';
 const TelegramAppWrapper: TTelegramAppWrapper = ({ children }) => {
     const { isReady, isTMA } = useTelegram() as any;
     const [theme, setTheme] = React.useState('light');
+    console.log("wrapper tg", isTMA);
 
     useEffect(() => {
         if (isTMA && isReady) {

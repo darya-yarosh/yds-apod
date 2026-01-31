@@ -25,9 +25,11 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     const [telegram, setTelegram] = useState<ITelegramWebApp | null>(null);
     const [user, setUser] = useState<ITelegramUser | null>(null);
     const [isReady, setIsReady] = useState(false);
+    console.log("tgprodiv")
 
     useEffect(() => {
         if (typeof window !== 'undefined' && isTMA()) {
+            console.log("isTMA?");
             try {
                 // Инициализация SDK - теперь получаем весь объект
                 const tg = init();
@@ -35,7 +37,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
                 
                 // Получаем данные пользователя
                 const userData = tg.initDataUnsafe?.user || null;
-                setUser(userData || null);
+                setUser(userData);
                 
                 // Настройка кнопки "Назад" - теперь через tg.BackButton
                 if (tg.BackButton) {
@@ -97,8 +99,11 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
 
 export const useTelegram = (): TelegramContextType => {
     const context = useContext(TelegramContext);
+    console.log("context", context, isTMA());
     if (!context) {
         throw new Error('useTelegram must be used within TelegramProvider');
     }
-    return context;
+    return {
+        ...context,
+    };
 };

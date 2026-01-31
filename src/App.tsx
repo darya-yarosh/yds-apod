@@ -17,6 +17,7 @@ import ErrorPage from 'pages/ErrorPage/ErrorPage';
 import './App.css';
 import TelegramAppWrapper from 'components/TelegramAppWrapper';
 import { useTelegram } from 'components/TelegramProvider';
+import { isTMA } from '@telegram-apps/sdk';
 
 export const router = createBrowserRouter(
 	createRoutesFromElements([
@@ -70,20 +71,23 @@ function PageWrapper() {
 }
 
 export default function App() {
-	const { isTMA } = useTelegram() as any;
+	const { isTMA: isTMAMethod } = useTelegram();
+	let consoleLog = `isTMA?, ${isTMAMethod}, ${isTMA()}, ${!!window}`;
+	console.log(consoleLog);
 
-	 if (isTMA) {
+	if (isTMAMethod) {
         return (
-            <TelegramAppWrapper>
-                <div className="App">
+			<div className="App">
+				<TelegramAppWrapper>
 					<RouterProvider router={router} />
-				</div>
-            </TelegramAppWrapper>
+				</TelegramAppWrapper>
+			</div>
         );
     }
 
 	return (
 		<div className="App">
+			<span>{consoleLog}</span>
 			<RouterProvider router={router} />
 		</div>
 	);
