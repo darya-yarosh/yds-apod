@@ -30,6 +30,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     const [isReady, setIsReady] = useState(false);
 
     const isTMAstate = isTMA();
+    const [errMsg, setErrMsg] = useState("");
 
     /**
      * Handlers
@@ -50,53 +51,62 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
 
     const handleInit = useCallback(() => {
         if (!window) {
+            setErrMsg("window not");
             return;
         }
 
         if (!isTMAstate) {
+            setErrMsg("isTMAstate not");
             return;
         }
 
         if (telegram) {
+            setErrMsg("telegram yes");
             return;
         }
 
-        try {
-            // Инициализация SDK - теперь получаем весь объект
-            const tg = init();
-            setTelegram(tg);
-            
-            // Получаем данные пользователя
-            const userData = tg.initDataUnsafe?.user || null;
-            setUser(userData);
-            
-            // Настройка кнопки "Назад" - теперь через tg.BackButton
-            if (tg.BackButton) {
-                tg.BackButton.show();
-                tg.BackButton.onClick(() => {
-                    window.history.back();
-                });
-            }
-            
-            // В новой версии viewport управляется автоматически
-            // Просто расширяем на весь экран
-            tg.expand();
-            
-            // Устанавливаем CSS переменные для темы
-            applyTelegramTheme(tg);
-            
-            setIsReady(true);
-            
-            // Очистка при размонтировании
-            return () => {
-                if (tg.BackButton) {
-                    tg.BackButton.hide();
-                    tg.BackButton.offClick(() => {});
-                }
-            };
-        } catch (error) {
-            console.error('Error initializing Telegram SDK:', error);
+        // Инициализация SDK - теперь получаем весь объект
+        const tg = init();
+        setTelegram(tg);
+        setErrMsg((current) => `${current}+${"init tg"}`);
+        
+        // Получаем данные пользователя
+        const userData = tg.initDataUnsafe?.user || null;
+        setUser(userData);
+        setErrMsg((current) => `${current}+${"init user"}`);
+        
+        // Настройка кнопки "Назад" - теперь через tg.BackButton
+        if (tg.BackButton) {
+            tg.BackButton.show();
+            tg.BackButton.onClick(() => {
+                window.history.back();
+            });
+            setErrMsg((current) => `${current}+${"init btn"}`);
         }
+        
+        // В новой версии viewport управляется автоматически
+        // Просто расширяем на весь экран
+        tg.expand();
+        setErrMsg((current) => `${current}+${"init expand"}`);
+        
+        // Устанавливаем CSS переменные для темы
+        applyTelegramTheme(tg);
+        setErrMsg((current) => `${current}+${"init theme"}`);
+        
+        setIsReady(true);
+        setErrMsg((current) => `${current}+${"init ready"}`);
+        
+        // Очистка при размонтировании
+        return () => {
+            setErrMsg((current) => `${current}+${"MONTIR"}`);
+            if (tg.BackButton) {
+                tg.BackButton.hide();
+                tg.BackButton.offClick(() => {});
+            }
+        };
+        // } catch (error) {
+        //     console.error('Error initializing Telegram SDK:', error);
+        // }
     }, [isTMAstate, telegram, applyTelegramTheme]);
 
     useEffect(() => {
@@ -122,6 +132,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
                 <span>{`${Boolean(isReady)}`}</span>
                 <span>{`${Boolean(window)}`}</span>
                 <span>{`${isTMAstate}`}</span>
+                <span>{errMsg}</span>
             </div>
             {children}
         </TelegramContext.Provider>
