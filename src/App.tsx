@@ -15,6 +15,8 @@ import MainPage from 'pages/MainPage/MainPage';
 import ErrorPage from 'pages/ErrorPage/ErrorPage';
 
 import './App.css';
+import TelegramAppWrapper from 'components/TelegramAppWrapper';
+import { useTelegram } from 'components/TelegramProvider';
 
 export const router = createBrowserRouter(
 	createRoutesFromElements([
@@ -68,6 +70,18 @@ function PageWrapper() {
 }
 
 export default function App() {
+	const { isTMA } = useTelegram() as any;
+
+	 if (isTMA) {
+        return (
+            <TelegramAppWrapper>
+                <div className="App">
+					<RouterProvider router={router} />
+				</div>
+            </TelegramAppWrapper>
+        );
+    }
+
 	return (
 		<div className="App">
 			<RouterProvider router={router} />
