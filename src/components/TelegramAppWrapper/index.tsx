@@ -1,14 +1,13 @@
 // src/components/TelegramAppWrapper.jsx
 import React, { useEffect } from 'react';
 
-import { init, themeParams } from '@telegram-apps/sdk';
+import { themeParams } from '@telegram-apps/sdk';
 import { useTelegram } from 'components/TelegramProvider';
 import { TTelegramAppWrapper } from './types';
 
 const TelegramAppWrapper: TTelegramAppWrapper = ({ children }) => {
     const { isReady, isTMA } = useTelegram() as any;
     const [theme, setTheme] = React.useState('light');
-    console.log("wrapper tg", isTMA);
 
     useEffect(() => {
         if (isTMA && isReady) {

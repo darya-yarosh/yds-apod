@@ -12,7 +12,6 @@ import './App.css';
 const AppContent = () => {
 	const { isTMA: isTMAMethod } = useTelegram();
 	let consoleLog = `isTMA?, ${isTMAMethod}, ${isTMA()}, ${!!window}`;
-	console.log(consoleLog);
 
 	if (isTMAMethod) {
         return (
