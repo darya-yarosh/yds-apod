@@ -36,8 +36,8 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     const [errMsg, setErrMsg] = useState("");
 
     const userData = useTelegramUser();
-    useTelegramBackButton(() => window.history.back());
-    useTelegramViewport();
+    // useTelegramBackButton(() => window.history.back());
+    // useTelegramViewport();
 
     /**
      * Handlers
