@@ -1,4 +1,4 @@
-import { isTMA, initDataUser } from "@telegram-apps/sdk";
+import { isTMA, retrieveLaunchParams } from "@telegram-apps/sdk";
 import { useEffect, useState } from "react";
 
 import { TelegramUser, TUseTelegramUser } from "./types";
@@ -9,8 +9,9 @@ export const useTelegramUser: TUseTelegramUser = () => {
 
     useEffect(() => {
         try {
-            if (isTMA()) {
-                const userData = initDataUser();
+            const { tgWebAppData: initData } = retrieveLaunchParams();
+            if (isTMA() && initData) {
+                const userData = initData?.user;
                 if (userData) {
                     setUser(userData);
                 }
