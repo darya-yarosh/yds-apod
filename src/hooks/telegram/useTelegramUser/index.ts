@@ -8,12 +8,14 @@ export const useTelegramUser: TUseTelegramUser = () => {
     const [user, setUser] = useState<TelegramUser>(null);
 
     useEffect(() => {
-        if (isTMA()) {
-            const userData = initDataUser();
-            if (userData) {
-                setUser(userData);
+        try {
+            if (isTMA()) {
+                const userData = initDataUser();
+                if (userData) {
+                    setUser(userData);
+                }
             }
-        }
+        } catch {}
     }, []);
 
     return user;

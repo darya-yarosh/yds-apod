@@ -32,10 +32,12 @@ export const useTelegramSendData: TUseTelegramSendData = () => {
 
     const showAlert = useCallback((message: string): void => {
         if (isTMA() && popup.isSupported()) {
-            popup.show({
-                message,
-                buttons: [{ type: 'ok', id: 'ok' }]
-            });
+            try {
+                popup.show({
+                    message,
+                    buttons: [{ type: 'ok', id: 'ok' }]
+                });
+            } catch {}
         } else {
             // Фолбэк для web
             window.alert(message);
@@ -52,7 +54,9 @@ export const useTelegramSendData: TUseTelegramSendData = () => {
         }>;
     }): Promise<string | undefined> => {
         if (isTMA() && popup.isSupported()) {
-            popup.show(params);
+            try {
+                popup.show(params);
+            } catch {}
         }
         
         // Фолбэк для web

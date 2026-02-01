@@ -42,23 +42,25 @@ export default function Header() {
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
 
     const updFavourites = useCallback(async (favouritesData: string) => {
-        if (!TGCloudStorage) {
-            return;
-        }
-        
-        let currentFavourites = tgFavourites;
-
-        if (!currentFavourites) {
-            currentFavourites = await TGCloudStorage.getItem("favourites");
-
-            if (!currentFavourites) {
+        try {
+            if (!TGCloudStorage) {
                 return;
             }
-
-            setTgFavourites(currentFavourites);
-        }
-        
-        TGCloudStorage.setItem("favourites", currentFavourites);
+            
+            let currentFavourites = tgFavourites;
+            
+            if (!currentFavourites) {
+                currentFavourites = await TGCloudStorage.getItem("favourites");
+                
+                if (!currentFavourites) {
+                    return;
+                }
+                
+                setTgFavourites(currentFavourites);
+            }
+            
+            TGCloudStorage.setItem("favourites", favouritesData);
+        } catch {}
     }, [TGCloudStorage, tgFavourites]);
 
 
