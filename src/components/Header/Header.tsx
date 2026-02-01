@@ -8,7 +8,7 @@ import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverte
 
 import { TOrNull } from 'models/TOrNull';
 
-import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
+// import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
 import { useTelegramCloudStorage } from 'hooks/telegram/useTelegramCloudStorage';
 
 import './Header.css';
@@ -36,7 +36,7 @@ export default function Header() {
         ]
     ]
 
-    const TGUserInfo = useTelegramUser();
+    // const TGUserInfo = useTelegramUser();
     const TGCloudStorage = useTelegramCloudStorage();
 
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
@@ -102,11 +102,11 @@ export default function Header() {
                 }
             </section>
         </div>
-        <div className='Header_row'>
-                <span>{TGCloudStorage.storage}</span>
-                <span>{tgFavourites}</span>
-                <span>{TGUserInfo?.first_name}</span>
-                <span>{TGUserInfo?.username}</span>
-        </div>
+        {/* <div className='Header_row'>
+            <span>{TGCloudStorage?.storage}</span>
+            <span>{tgFavourites}</span>
+            <span>{TGUserInfo?.first_name}</span>
+            <span>{TGUserInfo?.username}</span>
+        </div> */}
     </header >
 }
