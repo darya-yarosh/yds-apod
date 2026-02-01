@@ -41,8 +41,14 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     /**
      * Handlers
      */
-    const applyTelegramTheme = useCallback(() => {
-        if (!theme) return;
+    const applyTelegramTheme = useCallback((needApply: boolean) => {
+        if (!needApply) {
+            return;
+        }
+
+        if (!theme) {
+            return;
+        }
         
         const root = document.documentElement;
 
@@ -62,7 +68,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
         if (!theme) {
             return;
         }
-        
+
         // Также добавляем переменные для isDark
         root.style.setProperty('--tg-theme-is-dark', theme === "dark" ? '1' : '0');
         
@@ -99,28 +105,8 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
             setUser(userData);
             setErrMsg((current) => `${current}+init user`);
             
-            // Настройка кнопки "Назад" через отдельный модуль
-            // if (backButton.isSupported()) {
-            //     backButton.mount();
-
-            //     backButton.show();
-            //     backButton.onClick(() => {
-            //         window.history.back();
-            //     });
-            //     setErrMsg((current) => `${current}+init backButton`);
-            // }
-            
-            // Расширяем viewport через отдельный модуль
-            // if (viewport) {
-            //     viewport.mount();
-
-            //     viewport.expand(); // ВОТ ПРАВИЛЬНЫЙ ВЫЗОВ!
-            //     viewport.bindCssVars(); // Автоматически устанавливает CSS переменные
-            //     setErrMsg((current) => `${current}+init viewport`);
-            // }
-            
             // Альтернативно: ручная установка CSS переменных
-            applyTelegramTheme();
+            applyTelegramTheme(false);
             setErrMsg((current) => `${current}+init theme`);
             
             setIsReady(true);
