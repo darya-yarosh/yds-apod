@@ -1,7 +1,6 @@
 import {
 	RouterProvider,
 } from 'react-router-dom';
-import { isTMA } from '@telegram-apps/sdk';
 
 import { router } from 'router';
 import TelegramAppWrapper from 'components/TelegramAppWrapper';
@@ -10,13 +9,14 @@ import { TelegramProvider, useTelegram } from 'components/TelegramProvider';
 import './App.css';
 
 const AppContent = () => {
-	const { isTMA: isTMAMethod } = useTelegram();
-	let consoleLog = `isTMA?, ${isTMAMethod}, ${isTMA()}, ${!!window}`;
+	const { isTMA } = useTelegram();
+	let consoleLog = `isTMA?, ${isTMA}, ${!!window}`;
 
-	if (isTMAMethod) {
+	if (isTMA) {
         return (
 			<div className="App">
 				<TelegramAppWrapper>
+					<span>{"1"+consoleLog}</span>
 					<RouterProvider router={router} />
 				</TelegramAppWrapper>
 			</div>
@@ -25,7 +25,7 @@ const AppContent = () => {
 
 	return (
 		<div className="App">
-			<span>{consoleLog}</span>
+			<span>{"2:"+consoleLog}</span>
 			<RouterProvider router={router} />
 		</div>
 	);
