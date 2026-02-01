@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { init, isTMA } from '@telegram-apps/sdk';
+import { cloudStorage, isTMA } from '@telegram-apps/sdk';
 
 import { TUseTelegramCloudStorage } from './types';
 
@@ -9,37 +9,33 @@ export const useTelegramCloudStorage: TUseTelegramCloudStorage = () => {
 
     useEffect(() => {
         if (isTMA()) {
-            const tg = init();
-            if (tg.CloudStorage) {
-                setStorage(tg.CloudStorage);
+            if (cloudStorage) {
+                setStorage(cloudStorage);
             }
         }
     }, []);
 
     const setItem = useCallback(async (key: string, value: string): Promise<void> => {
         if (isTMA()) {
-            const tg = init();
-            if (tg.CloudStorage) {
-                await tg.CloudStorage.setItem(key, value);
+            if (cloudStorage) {
+                await cloudStorage.setItem(key, value);
             }
         }
     }, []);
 
     const getItem = useCallback(async (key: string): Promise<string | null> => {
         if (isTMA()) {
-            const tg = init();
-            if (tg.CloudStorage) {
-                return await tg.CloudStorage.getItem(key);
+            if (cloudStorage) {
+                return await cloudStorage.getItem(key);
             }
         }
         return null;
     }, []);
 
     const removeItem = useCallback(async (key: string): Promise<void> => {
-        if (isTMA()) {
-            const tg = init();
-            if (tg.CloudStorage) {
-                await tg.CloudStorage.removeItem(key);
+        if (isTMA() && cloudStorage.isSupported()) {
+            if (cloudStorage) {
+                await cloudStorage.deleteItem(key);
             }
         }
     }, []);

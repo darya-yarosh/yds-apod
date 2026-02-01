@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { init, isTMA } from '@telegram-apps/sdk';
 
-import { ITelegramThemeParams } from 'models/telegram';
+import { ITelegramThemeParams, TUseTelegramTheme } from './types';
 
-import { TUseTelegramTheme } from './types';
-
+// TODO
 export const useTelegramTheme: TUseTelegramTheme = () => {
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [themeParams, setThemeParams] = useState<ITelegramThemeParams>({
@@ -19,18 +18,18 @@ export const useTelegramTheme: TUseTelegramTheme = () => {
 
     useEffect(() => {
         if (isTMA()) {
-            const tg = init();
-            if (tg.themeParams) {
-                const currentTheme = tg.colorScheme;
-                setTheme(currentTheme);
-                setThemeParams(tg.themeParams);
+            // const tg = init();
+            // if (tg.themeParams) {
+            //     const currentTheme = tg.colorScheme;
+            //     setTheme(currentTheme);
+            //     setThemeParams(tg.themeParams);
                 
-                // Слушаем изменения темы
-                tg.onEvent('themeChanged', () => {
-                    setTheme(tg.colorScheme);
-                    setThemeParams(tg.themeParams);
-                });
-            }
+            //     // Слушаем изменения темы
+            //     tg.onEvent('themeChanged', () => {
+            //         setTheme(tg.colorScheme);
+            //         setThemeParams(tg.themeParams);
+            //     });
+            // }
         }
     }, []);
 

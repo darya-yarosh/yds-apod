@@ -10,7 +10,9 @@ export const useTelegramPlatform: TUseTelegramPlatform = () => {
     useEffect(() => {
         if (isTMA()) {
             const tg = init();
-            setPlatform(tg.platform);
+
+            const currentPlatform = (tg as any)?.platform || "unknown";
+            setPlatform(currentPlatform);
         }
     }, []);
 

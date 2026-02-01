@@ -1,4 +1,4 @@
-import { init, isTMA } from "@telegram-apps/sdk";
+import { isTMA, initDataUser } from "@telegram-apps/sdk";
 import { useEffect, useState } from "react";
 
 import { TelegramUser, TUseTelegramUser } from "./types";
@@ -9,8 +9,7 @@ export const useTelegramUser: TUseTelegramUser = () => {
 
     useEffect(() => {
         if (isTMA()) {
-            const tg = init();
-            const userData = tg.initDataUnsafe?.user;
+            const userData = initDataUser();
             if (userData) {
                 setUser(userData);
             }

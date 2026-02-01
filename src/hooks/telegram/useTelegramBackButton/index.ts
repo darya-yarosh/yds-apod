@@ -1,16 +1,14 @@
 import { useEffect } from 'react';
-import { init, isTMA } from '@telegram-apps/sdk';
+import { isTMA, backButton } from '@telegram-apps/sdk';
 
 import { TUseTelegramBackButton } from './types';
 
 // Хук для кнопки "Назад"
 export const useTelegramBackButton:TUseTelegramBackButton = (onClick) => {
     useEffect(() => {
-        if (isTMA()) {
-            const tg = init();
-            
-            if (tg.BackButton) {
-                tg.BackButton.show();
+        if (isTMA() && backButton.isSupported()) {            
+            if (backButton) {
+                backButton.show();
                 
                 const handleClick = () => {
                     if (onClick) {
@@ -20,11 +18,11 @@ export const useTelegramBackButton:TUseTelegramBackButton = (onClick) => {
                     }
                 };
                 
-                tg.BackButton.onClick(handleClick);
+                backButton.onClick(handleClick);
                 
                 return () => {
-                    tg.BackButton.offClick(handleClick);
-                    tg.BackButton.hide();
+                    backButton.offClick(handleClick);
+                    backButton.hide();
                 };
             }
         }

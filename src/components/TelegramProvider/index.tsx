@@ -1,11 +1,12 @@
 // src/contexts/TelegramContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react';
-import { init, isTMA } from '@telegram-apps/sdk';
-import { ITelegramWebApp, ITelegramUser } from "../../models/telegram";
+import { init, isTMA, viewport, backButton, User, InitData, themeParams,  } from '@telegram-apps/sdk';
+// import { ITelegramWebApp, ITelegramUser } from "../../models/telegram";
+import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
 
 interface TelegramContextType {
-    telegram: ITelegramWebApp | null;
-    user: ITelegramUser | null;
+    telegram: InitData | null;
+    user: User | null;
     isReady: boolean;
     isTMA: boolean;
 }
@@ -25,91 +26,97 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     /**
      * State
      */
-    const [telegram, setTelegram] = useState<ITelegramWebApp | null>(null);
-    const [user, setUser] = useState<ITelegramUser | null>(null);
+    const [telegram, setTelegram] = useState<InitData | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [isReady, setIsReady] = useState(false);
 
     const isTMAstate = isTMA();
     const [errMsg, setErrMsg] = useState("");
 
+    const userData = useTelegramUser();
+
     /**
      * Handlers
      */
-    // Функция применения темы
-    const applyTelegramTheme = useCallback((tg: ITelegramWebApp) => {
-        const root = document.documentElement;
+    const applyTelegramTheme = useCallback(() => {
+        if (!themeParams) return;
         
-        // Устанавливаем CSS переменные
-        root.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
-        root.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
-        root.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
-        root.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color);
-        root.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-        root.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
-        root.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color);
+        const root = document.documentElement;
+        const currentTheme = (themeParams as any).get();
+        
+        // Устанавливаем CSS переменные из themeParams
+        root.style.setProperty('--tg-theme-bg-color', currentTheme.bgColor);
+        root.style.setProperty('--tg-theme-text-color', currentTheme.textColor);
+        root.style.setProperty('--tg-theme-hint-color', currentTheme.hintColor);
+        root.style.setProperty('--tg-theme-link-color', currentTheme.linkColor);
+        root.style.setProperty('--tg-theme-button-color', currentTheme.buttonColor);
+        root.style.setProperty('--tg-theme-button-text-color', currentTheme.buttonTextColor);
+        root.style.setProperty('--tg-theme-secondary-bg-color', currentTheme.secondaryBgColor);
+        
+        // Также добавляем переменные для isDark
+        root.style.setProperty('--tg-theme-is-dark', currentTheme.isDark ? '1' : '0');
+        
+        // Устанавливаем класс темы на body
+        document.body.classList.toggle('tg-theme-dark', currentTheme.isDark);
+        document.body.classList.toggle('tg-theme-light', !currentTheme.isDark);
     }, []);
 
     const handleInit = useCallback(() => {
-        if (!window) {
-            setErrMsg("window not");
+        if (typeof window === 'undefined') {
+            setErrMsg("window not defined");
             return;
         }
 
         if (!isTMAstate) {
-            setErrMsg("isTMAstate not");
+            setErrMsg("isTMAstate false");
             return;
         }
 
         if (telegram) {
-            setErrMsg("telegram yes");
+            setErrMsg("telegram already initialized");
             return;
         }
 
         try {
-            // Инициализация SDK - теперь получаем весь объект
+            // Вариант 1: Используем новую версию SDK (@telegram-apps/sdk)
             const tg = init();
-            setTelegram(tg);
-            setErrMsg((current) => `${current}+${"init tg"}`);
+            
+            // Сохраняем объект для совместимости
+            setTelegram(tg as unknown as InitData);
+            setErrMsg((current) => `${current}+init tg`);
             
             // Получаем данные пользователя
-            const userData = tg.initDataUnsafe?.user || null;
             setUser(userData);
-            setErrMsg((current) => `${current}+${"init user"}`);
+            setErrMsg((current) => `${current}+init user`);
             
-            // Настройка кнопки "Назад" - теперь через tg.BackButton
-            if (tg.BackButton) {
-                tg.BackButton.show();
-                tg.BackButton.onClick(() => {
+            // Настройка кнопки "Назад" через отдельный модуль
+            if (backButton.isSupported()) {
+                backButton.show();
+                backButton.onClick(() => {
                     window.history.back();
                 });
-                setErrMsg((current) => `${current}+${"init btn"}`);
+                setErrMsg((current) => `${current}+init backButton`);
             }
             
-            // В новой версии viewport управляется автоматически
-            // Просто расширяем на весь экран
-            tg.expand();
-            setErrMsg((current) => `${current}+${"init expand"}`);
+            // Расширяем viewport через отдельный модуль
+            if (viewport) {
+                viewport.expand(); // ВОТ ПРАВИЛЬНЫЙ ВЫЗОВ!
+                viewport.bindCssVars(); // Автоматически устанавливает CSS переменные
+                setErrMsg((current) => `${current}+init viewport`);
+            }
             
-            // Устанавливаем CSS переменные для темы
-            applyTelegramTheme(tg);
-            setErrMsg((current) => `${current}+${"init theme"}`);
+            // Альтернативно: ручная установка CSS переменных
+            applyTelegramTheme();
+            setErrMsg((current) => `${current}+init theme`);
             
             setIsReady(true);
-            setErrMsg((current) => `${current}+${"init ready"}`);
+            setErrMsg((current) => `${current}+init ready`);
             
-            // Очистка при размонтировании
-            return () => {
-                setErrMsg((current) => `${current}+${"MONTIR"}`);
-                if (tg.BackButton) {
-                    tg.BackButton.hide();
-                    tg.BackButton.offClick(() => {});
-                }
-            };
         } catch (error) {
-            setErrMsg((current) => `${current}+${"SDKerror!:"}:${error}`);
+            setErrMsg((current) => `${current}+SDK error: ${error}`);
             console.error('Error initializing Telegram SDK:', error);
         }
-    }, [isTMAstate, telegram, applyTelegramTheme]);
+    }, [isTMAstate, telegram, userData, applyTelegramTheme]);
 
     useEffect(() => {
         handleInit()
@@ -129,11 +136,11 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
         <TelegramContext.Provider value={value}>
             <div style={{"color": "white", "backgroundColor": "black", "display": "flex", "flexDirection": "row", "width": "100%"}}>
                 <span>{"tgProvider"}</span>
-                <span>{`${Boolean(telegram)}`}</span>
-                <span>{`${Boolean(user)}`}</span>
-                <span>{`${Boolean(isReady)}`}</span>
-                <span>{`${Boolean(window)}`}</span>
-                <span>{`${isTMAstate}`}</span>
+                <span>{`telegram: ${Boolean(telegram)}`}</span>
+                <span>{`user: ${Boolean(user)}`}</span>
+                <span>{`ready: ${isReady}`}</span>
+                <span>{`window: ${typeof window !== 'undefined'}`}</span>
+                <span>{`isTMA: ${isTMAstate}`}</span>
                 <span>{errMsg}</span>
             </div>
             {children}

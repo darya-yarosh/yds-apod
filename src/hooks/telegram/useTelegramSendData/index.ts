@@ -1,14 +1,20 @@
 import { useCallback } from 'react';
-import { init, isTMA } from '@telegram-apps/sdk';
+import { 
+    isTMA, 
+    sendData,
+    closeMiniApp,
+    popup,  // для showPopup и showPopupError
+    hapticFeedback // опционально для обратной связи
+} from '@telegram-apps/sdk';
 
 import { TUseTelegramSendData } from './types';
 
 export const useTelegramSendData: TUseTelegramSendData = () => {
-    const sendData = useCallback((data: unknown): boolean => {
-        if (isTMA()) {
-            const tg = init();
+    const handleSendData = useCallback((data: unknown): boolean => {
+        if (isTMA() && sendData.isSupported()) {
             try {
-                tg.sendData(JSON.stringify(data));
+                sendData(JSON.stringify(data));
+                hapticFeedback.notificationOccurred('success'); // опционально
                 return true;
             } catch (error) {
                 console.error('Error sending data:', error);
@@ -19,20 +25,24 @@ export const useTelegramSendData: TUseTelegramSendData = () => {
     }, []);
 
     const closeApp = useCallback((): void => {
-        if (isTMA()) {
-            const tg = init();
-            tg.close();
+        if (isTMA() && closeMiniApp) {
+            closeMiniApp();
         }
     }, []);
 
     const showAlert = useCallback((message: string): void => {
-        if (isTMA()) {
-            const tg = init();
-            tg.showAlert(message);
+        if (isTMA() && popup.isSupported()) {
+            popup.show({
+                message,
+                buttons: [{ type: 'ok', id: 'ok' }]
+            });
+        } else {
+            // Фолбэк для web
+            window.alert(message);
         }
     }, []);
 
-    const showPopup = useCallback(async (params: {
+    const handleShowPopup = useCallback(async (params: {
         title?: string;
         message: string;
         buttons?: Array<{
@@ -41,15 +51,19 @@ export const useTelegramSendData: TUseTelegramSendData = () => {
             text: string;
         }>;
     }): Promise<string | undefined> => {
-        if (isTMA()) {
-            const tg = init();
-            return new Promise((resolve) => {
-                tg.showPopup(params, (buttonId: string) => {
-                    resolve(buttonId);
-                });
-            });
+        if (isTMA() && popup.isSupported()) {
+            popup.show(params);
         }
+        
+        // Фолбэк для web
+        const result = window.confirm(params.message);
+        return result ? 'ok' : 'cancel';
     }, []);
 
-    return { sendData, closeApp, showAlert, showPopup };
+    return { 
+        sendData: handleSendData, 
+        closeApp, 
+        showAlert, 
+        showPopup: handleShowPopup 
+    };
 };
