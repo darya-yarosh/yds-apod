@@ -7,24 +7,23 @@ import { TUseTelegramBackButton } from './types';
 export const useTelegramBackButton:TUseTelegramBackButton = (onClick) => {
     useEffect(() => {
         if (isTMA() && backButton.isSupported()) {            
-            if (backButton) {
-                backButton.show();
-                
-                const handleClick = () => {
-                    if (onClick) {
-                        onClick();
-                    } else {
-                        window.history.back();
-                    }
-                };
-                
-                backButton.onClick(handleClick);
-                
-                return () => {
-                    backButton.offClick(handleClick);
-                    backButton.hide();
-                };
-            }
+            backButton.mount();
+            backButton.show();
+            
+            const handleClick = () => {
+                if (onClick) {
+                    onClick();
+                } else {
+                    window.history.back();
+                }
+            };
+            
+            backButton.onClick(handleClick);
+            
+            return () => {
+                backButton.offClick(handleClick);
+                backButton.hide();
+            };
         }
     }, [onClick]);
 };

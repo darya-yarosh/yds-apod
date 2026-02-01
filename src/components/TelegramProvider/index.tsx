@@ -1,8 +1,10 @@
 // src/contexts/TelegramContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react';
-import { init, isTMA, viewport, backButton, User, InitData, themeParams,  } from '@telegram-apps/sdk';
+import { init, isTMA, User, InitData, themeParams,  } from '@telegram-apps/sdk';
 // import { ITelegramWebApp, ITelegramUser } from "../../models/telegram";
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
+import { useTelegramBackButton } from 'hooks/telegram/useTelegramBackButton';
+import { useTelegramViewport } from 'hooks/telegram/useTelegramViewport';
 
 interface TelegramContextType {
     telegram: InitData | null;
@@ -34,6 +36,8 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     const [errMsg, setErrMsg] = useState("");
 
     const userData = useTelegramUser();
+    useTelegramBackButton(() => window.history.back());
+    useTelegramViewport();
 
     /**
      * Handlers
@@ -90,20 +94,24 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
             setErrMsg((current) => `${current}+init user`);
             
             // Настройка кнопки "Назад" через отдельный модуль
-            if (backButton.isSupported()) {
-                backButton.show();
-                backButton.onClick(() => {
-                    window.history.back();
-                });
-                setErrMsg((current) => `${current}+init backButton`);
-            }
+            // if (backButton.isSupported()) {
+            //     backButton.mount();
+
+            //     backButton.show();
+            //     backButton.onClick(() => {
+            //         window.history.back();
+            //     });
+            //     setErrMsg((current) => `${current}+init backButton`);
+            // }
             
             // Расширяем viewport через отдельный модуль
-            if (viewport) {
-                viewport.expand(); // ВОТ ПРАВИЛЬНЫЙ ВЫЗОВ!
-                viewport.bindCssVars(); // Автоматически устанавливает CSS переменные
-                setErrMsg((current) => `${current}+init viewport`);
-            }
+            // if (viewport) {
+            //     viewport.mount();
+
+            //     viewport.expand(); // ВОТ ПРАВИЛЬНЫЙ ВЫЗОВ!
+            //     viewport.bindCssVars(); // Автоматически устанавливает CSS переменные
+            //     setErrMsg((current) => `${current}+init viewport`);
+            // }
             
             // Альтернативно: ручная установка CSS переменных
             applyTelegramTheme();

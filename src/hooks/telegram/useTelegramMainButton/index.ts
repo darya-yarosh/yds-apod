@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { init, isTMA, mainButton } from "@telegram-apps/sdk";
+import { isTMA, mainButton } from "@telegram-apps/sdk";
 
 import { TUseTelegramMainButton } from "./types";
 
@@ -16,9 +16,9 @@ export const useTelegramMainButton: TUseTelegramMainButton = (options = {}) => {
 
     useEffect(() => {
         if (isTMA()) {
-            const tg = init();
-            
             if (mainButton) {
+                mainButton.mount();
+                
                 mainButton.setParams({text: text});
                 
                 if (color) {

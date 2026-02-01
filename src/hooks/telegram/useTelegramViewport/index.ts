@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { init, isTMA, viewportHeight, viewportStableHeight, isViewportExpanded } from '@telegram-apps/sdk';
+import { isTMA, viewport, viewportHeight, viewportStableHeight, isViewportExpanded } from '@telegram-apps/sdk';
 
 import { TUseTelegramViewport } from './types';
 
@@ -12,7 +12,9 @@ export const useTelegramViewport: TUseTelegramViewport = () => {
 
     useEffect(() => {
         if (isTMA()) {
-            const tg = init();
+            viewport.mount();
+            viewport.expand();
+            viewport.bindCssVars(); // Автоматически устанавливает CSS переменные
             
             const updateViewport = () => {
                 setViewportState({
