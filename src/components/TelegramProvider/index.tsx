@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react';
-import { init, isTMA, User, InitData, themeParams,  } from '@telegram-apps/sdk';
+import { init, isTMA, User, InitData,  } from '@telegram-apps/sdk';
 
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
+import { useTelegramTheme } from 'hooks/telegram/useTelegramTheme';
 
 interface TelegramContextType {
     telegram: InitData | null;
@@ -33,6 +34,7 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     const [errMsg, setErrMsg] = useState("");
 
     const userData = useTelegramUser();
+    const { theme, themeParams } = useTelegramTheme();
     // useTelegramBackButton(() => window.history.back());
     // useTelegramViewport();
 
@@ -40,31 +42,30 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
      * Handlers
      */
     const applyTelegramTheme = useCallback(() => {
-        if (!themeParams) return;
+        if (!theme) return;
         
         const root = document.documentElement;
-        const currentTheme = (themeParams as any)?.get();
 
-        if (!currentTheme) {
+        if (!themeParams) {
             return;
         }
         
         // Устанавливаем CSS переменные из themeParams
-        root.style.setProperty('--tg-theme-bg-color', currentTheme.bgColor);
-        root.style.setProperty('--tg-theme-text-color', currentTheme.textColor);
-        root.style.setProperty('--tg-theme-hint-color', currentTheme.hintColor);
-        root.style.setProperty('--tg-theme-link-color', currentTheme.linkColor);
-        root.style.setProperty('--tg-theme-button-color', currentTheme.buttonColor);
-        root.style.setProperty('--tg-theme-button-text-color', currentTheme.buttonTextColor);
-        root.style.setProperty('--tg-theme-secondary-bg-color', currentTheme.secondaryBgColor);
+        root.style.setProperty('--tg-theme-bg-color', themeParams.bg_color);
+        root.style.setProperty('--tg-theme-text-color', themeParams.text_color);
+        root.style.setProperty('--tg-theme-hint-color', themeParams.hint_color);
+        root.style.setProperty('--tg-theme-link-color', themeParams.link_color);
+        root.style.setProperty('--tg-theme-button-color', themeParams.button_color);
+        root.style.setProperty('--tg-theme-button-text-color', themeParams.button_text_color);
+        root.style.setProperty('--tg-theme-secondary-bg-color', themeParams.secondary_bg_color);
         
         // Также добавляем переменные для isDark
-        root.style.setProperty('--tg-theme-is-dark', currentTheme.isDark ? '1' : '0');
+        root.style.setProperty('--tg-theme-is-dark', theme === "dark" ? '1' : '0');
         
         // Устанавливаем класс темы на body
-        document.body.classList.toggle('tg-theme-dark', currentTheme.isDark);
-        document.body.classList.toggle('tg-theme-light', !currentTheme.isDark);
-    }, []);
+        document.body.classList.toggle('tg-theme-dark', theme === "dark" );
+        document.body.classList.toggle('tg-theme-light', theme === "light");
+    }, [theme, themeParams]);
 
     const handleInit = useCallback(() => {
         if (typeof window === 'undefined') {
