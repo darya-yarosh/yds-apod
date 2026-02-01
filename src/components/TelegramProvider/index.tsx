@@ -86,11 +86,6 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
             return;
         }
 
-        if (telegram) {
-            setErrMsg("telegram already initialized");
-            return;
-        }
-
         try {
             // Инициализация SDK
             init();
@@ -98,12 +93,16 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
             const { tgWebAppData: initData } = retrieveLaunchParams();
             
             // Сохраняем объект для совместимости
-            setTelegram(initData as InitData);
-            setErrMsg((current) => `${current}+init tg`);
+            if (!telegram) {
+                setTelegram(initData as InitData);
+                setErrMsg((current) => `${current}+init tg`);
+            }
             
             // Получаем данные пользователя
-            setUser(userData);
-            setErrMsg((current) => `${current}+init user`);
+            if (!user) {
+                setUser(userData);
+                setErrMsg((current) => `${current}+init user`);
+            }
             
             // Альтернативно: ручная установка CSS переменных
             applyTelegramTheme(false);
@@ -111,12 +110,11 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
             
             setIsReady(true);
             setErrMsg((current) => `${current}+init ready`);
-            
         } catch (error) {
             setErrMsg((current) => `${current}+SDK error: ${error}`);
             console.error('Error initializing Telegram SDK:', error);
         }
-    }, [isTMAstate, telegram, userData, applyTelegramTheme]);
+    }, [isTMAstate, telegram, user, userData, applyTelegramTheme]);
 
     useEffect(() => {
         handleInit()
