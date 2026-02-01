@@ -12,16 +12,18 @@ const TelegramAppWrapper: TTelegramAppWrapper = ({ children }) => {
     useEffect(() => {
         if (isTMA && isReady) {
             // Настройка темы
-            const tgThemeParams = themeParams as any;
-            if (tgThemeParams.isSupported()) {
-                const currentTheme = tgThemeParams.get();
-                setTheme(currentTheme.isDark ? 'dark' : 'light');
-                
-                // Подписываемся на изменения темы
-                tgThemeParams.on('change', (newTheme: any) => {
-                    setTheme(newTheme.isDark ? 'dark' : 'light');
-                });
+            // if (tgThemeParams.isSupported()) {
+            const currentTheme = themeParams;
+            if (!currentTheme) {
+                return;
             }
+
+            setTheme(currentTheme.isDark() ? 'dark' : 'light');
+            // Подписываемся на изменения темы
+            // currentTheme.on('change', (newTheme: any) => {
+            //     setTheme(newTheme.isDark ? 'dark' : 'light');
+            // });
+            // }
         }
     }, [isTMA, isReady]);
 

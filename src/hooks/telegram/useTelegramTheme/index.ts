@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { init, isTMA } from '@telegram-apps/sdk';
+import { themeParams, isTMA } from '@telegram-apps/sdk';
 
 import { ITelegramThemeParams, TUseTelegramTheme } from './types';
 
-// TODO
 export const useTelegramTheme: TUseTelegramTheme = () => {
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
-    const [themeParams, setThemeParams] = useState<ITelegramThemeParams>({
+    const [themeParamsState, setThemeParamsState] = useState<ITelegramThemeParams>({
         bg_color: '#ffffff',
         text_color: '#000000',
         hint_color: '#999999',
@@ -18,20 +17,26 @@ export const useTelegramTheme: TUseTelegramTheme = () => {
 
     useEffect(() => {
         if (isTMA()) {
-            // const tg = init();
-            // if (tg.themeParams) {
-            //     const currentTheme = tg.colorScheme;
-            //     setTheme(currentTheme);
-            //     setThemeParams(tg.themeParams);
-                
-            //     // Слушаем изменения темы
-            //     tg.onEvent('themeChanged', () => {
-            //         setTheme(tg.colorScheme);
-            //         setThemeParams(tg.themeParams);
-            //     });
-            // }
+            const currentTheme = themeParams;
+            if (!currentTheme) {
+                return;
+            }
+
+            setTheme(currentTheme.isDark() ? 'dark' : 'light');
+
+            setThemeParamsState((current) => {
+                return {
+                    bg_color: currentTheme.backgroundColor() || current.bg_color,
+                    text_color: currentTheme.textColor() || current.text_color,
+                    hint_color: currentTheme.hintColor() || current.hint_color,
+                    link_color: currentTheme.linkColor() || current.link_color,
+                    button_color: currentTheme.buttonColor() || current.button_color,
+                    button_text_color: currentTheme.buttonTextColor() || current.button_text_color,
+                    secondary_bg_color: currentTheme.secondaryBackgroundColor() || current.secondary_bg_color,
+                };
+            });
         }
     }, []);
 
-    return { theme, themeParams };
+    return { theme, themeParams: themeParamsState };
 };

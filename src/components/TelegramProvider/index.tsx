@@ -1,10 +1,7 @@
-// src/contexts/TelegramContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react';
 import { init, isTMA, User, InitData, themeParams,  } from '@telegram-apps/sdk';
-// import { ITelegramWebApp, ITelegramUser } from "../../models/telegram";
+
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
-import { useTelegramBackButton } from 'hooks/telegram/useTelegramBackButton';
-import { useTelegramViewport } from 'hooks/telegram/useTelegramViewport';
 
 interface TelegramContextType {
     telegram: InitData | null;
@@ -46,7 +43,11 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
         if (!themeParams) return;
         
         const root = document.documentElement;
-        const currentTheme = (themeParams as any).get();
+        const currentTheme = (themeParams as any)?.get();
+
+        if (!currentTheme) {
+            return;
+        }
         
         // Устанавливаем CSS переменные из themeParams
         root.style.setProperty('--tg-theme-bg-color', currentTheme.bgColor);
