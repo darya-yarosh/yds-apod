@@ -16,23 +16,27 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: auto;
     gap: 8px;
+}
 
-    input {
-        height: 32px;
-        width: fit-content;
-    }
+.Header_state input {
+    height: 32px;
+    width: 100%;
+    max-width: -webkit-fill-available;
 }
 
 .Header_periodSelector {
     display: flex;
     flex-direction: row;
     gap: 4px;
+    width: 100%;
 }
 
 .Header_periodSelector section {
     display: flex;
     align-items: center;
+    width: fit-content;
 }
 
 .Header_periodSelector button,
@@ -42,6 +46,7 @@ input {
     border-style: outset;
     border-color: #ffffff;
     background: #FFFFFF;
+    width: 100%;
 }
 
 .Header_periodSelector button:hover,
@@ -101,12 +106,6 @@ input:hover {
     .Header_wrapper {
         padding: 16px;
     }
-    .Header_state {
-        width: fit-content;
-    }
-    .Header_periodSelector {
-        flex-direction: column;
-    }
     .Header_periodSelector input {
         width: 50%;
     }
@@ -133,13 +132,6 @@ input:hover {
 
     .Header_periodSelector section {
         display: flex;
-    }
-    .Header_state {
-        place-self: flex-end;
-
-        input {
-            width: 100%;
-        }
     }
     .Header_periodSelector {
         flex-direction: column;
@@ -313,15 +305,8 @@ input:hover {
     color-scheme: dark;
 }
 
-.Header_tgUser {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: 12px;
-    gap: 5px;
-}
-
 .Header_tgUser span:first-child {
-    font-weight: bold;
-    color: #f72585;
+    font-weight: 600;
+    color: white;
+    text-shadow: -2px 3px 0px #f72585;
 }

@@ -147,13 +147,18 @@ export default function Header() {
     }, [isDate, isPeriod, optionsValue, onNavigate]);
 
     const renderTgUser = useCallback(() => {
+        if (!TGUserInfo) {
+            return null;
+        }
+
         return (
             <section className="Header_tgUser">
-                <span>{TGUserInfo?.first_name}</span>
+                <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
+                <span>{`⭐ ${tgFavourites}`}</span>
             </section>
         )
-    }, [TGUserInfo?.first_name, TGUserInfo?.username]);
+    }, [TGUserInfo, tgFavourites]);
 
     const renderBurgerButton = useCallback(() => {
         return (
@@ -173,8 +178,8 @@ export default function Header() {
         return (
             <div className={`Header_burgerMenu ${isMenuOpen ? 'Header_burgerMenu--open' : ''}`}>
                 <div className="Header_burgerMenuContent">
-                    {renderState()}
                     {renderPagesSelector()}
+                    {renderState()}
                     {renderTgUser()}
                 </div>
             </div>
@@ -184,7 +189,7 @@ export default function Header() {
     return (
         <header className="Header_wrapper">
             {renderTitle()}
-            
+
             {renderBurgerButton()}
             {renderMobileMenu()}
             
