@@ -10,13 +10,11 @@ import './App.css';
 
 const AppContent = () => {
 	const { isTMA } = useTelegram();
-	let consoleLog = `isTMA?, ${isTMA}, ${!!window}`;
 
 	if (isTMA) {
         return (
 			<div className="App">
 				<TelegramAppWrapper>
-					<span>{"1"+consoleLog}</span>
 					<RouterProvider router={router} />
 				</TelegramAppWrapper>
 			</div>
@@ -25,7 +23,6 @@ const AppContent = () => {
 
 	return (
 		<div className="App">
-			<span>{"2:"+consoleLog}</span>
 			<RouterProvider router={router} />
 		</div>
 	);

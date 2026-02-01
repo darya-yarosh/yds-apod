@@ -1,4 +1,5 @@
 import { useTelegram } from 'components/TelegramProvider';
+import Loader from 'components/Loader/Loader';
 
 import { TTelegramAppWrapper } from './types';
 
@@ -9,7 +10,7 @@ const TelegramAppWrapper: TTelegramAppWrapper = ({ children }) => {
         return (
             <div className="telegram-loading">
                 <div>Загрузка Telegram Mini App...</div>
-                <span>{isTMA} & {isReady}</span>
+                <Loader />
             </div>
         );
     }

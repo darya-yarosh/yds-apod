@@ -79,12 +79,10 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
 
     const handleInit = useCallback(() => {
         if (typeof window === 'undefined') {
-            setErrMsg("window not defined");
             return;
         }
 
         if (!isTMAstate) {
-            setErrMsg("isTMAstate false");
             return;
         }
 
@@ -135,12 +133,8 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
     return (
         <TelegramContext.Provider value={value}>
             <div style={{"color": "white", "backgroundColor": "black", "display": "flex", "flexDirection": "row", "width": "100%"}}>
-                <span>{"tgProvider"}</span>
                 <span>{`telegram: ${Boolean(telegram)}`}</span>
                 <span>{`user: ${Boolean(user)}`}</span>
-                <span>{`ready: ${isReady}`}</span>
-                <span>{`window: ${typeof window !== 'undefined'}`}</span>
-                <span>{`isTMA: ${isTMAstate}`}</span>
                 <span>{errMsg}</span>
             </div>
             {children}
