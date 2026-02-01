@@ -1,6 +1,7 @@
 .Header_wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
     justify-content: space-evenly;
     padding: 8px 16px;
     align-items: center;
@@ -8,8 +9,6 @@
     color: #FFFFFF;
     font-size: 1rem;
     height: 80px;
-    grid-template-areas:
-        "state appName pages"
 }
 
 .Header_state {
@@ -18,6 +17,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+
+    input {
+        height: 32px;
+        width: fit-content;
+    }
 }
 
 .Header_periodSelector {
@@ -28,6 +32,7 @@
 
 .Header_periodSelector section {
     display: flex;
+    align-items: center;
 }
 
 .Header_periodSelector button,
@@ -125,14 +130,16 @@ input:hover {
         align-items: flex-start;
         justify-self: flex-start;
     }
-    .Header_pagesSelector label {
-        padding: 8px;
-    }
+
     .Header_periodSelector section {
         display: flex;
     }
     .Header_state {
         place-self: flex-end;
+
+        input {
+            width: 100%;
+        }
     }
     .Header_periodSelector {
         flex-direction: column;
@@ -157,4 +164,164 @@ input:hover {
         flex-direction: row;
         justify-self: center;
     }
+}
+
+
+
+/* Бургер-кнопка */
+.Header_burgerButton {
+    grid-area: burger;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: absolute;
+    right: 20px;
+    width: 30px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 0;
+}
+
+.Header_burgerLine {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.Header_burgerLine--top {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.Header_burgerLine--middle {
+    opacity: 0;
+}
+
+.Header_burgerLine--bottom {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Бургер-меню */
+.Header_burgerMenu {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 300px;
+    height: 100vh;
+    backdrop-filter: blur(10px);
+    background: #1B1B1B;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.5s ease;
+    z-index: 1000;
+    padding: 80px 20px 20px;
+    overflow-y: auto;
+}
+
+.Header_burgerMenu--open {
+    right: 0px;
+}
+
+.Header_burgerMenuContent {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.Header_burgerMenuContent .Header_state,
+.Header_burgerMenuContent .Header_pagesSelector,
+.Header_burgerMenuContent .Header_tgUser {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.Header_burgerMenuContent .Header_pagesSelector {
+    width: 100%;
+}
+
+.Header_burgerMenuContent .Header_pagesSelector select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 10px;
+}
+
+.Header_burgerMenuContent .Header_tgUser {
+    gap: 10px;
+}
+
+/* Overlay для меню */
+.Header_menuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Десктопная версия */
+.Header_desktopContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+    .Header_desktopContent {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .Header_wrapper {
+        justify-content: flex-start;
+        padding-right: 70px; /* Место для бургер-кнопки */
+    }
+}
+
+.Header_state {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.Header_pagesSelector select, .Header_state input {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color-scheme: dark;
+}
+
+.Header_tgUser {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 12px;
+    gap: 5px;
+}
+
+.Header_tgUser span:first-child {
+    font-weight: bold;
+    color: #f72585;
 }
