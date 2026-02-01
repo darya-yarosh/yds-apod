@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react';
-import { init, isTMA, User, InitData,  } from '@telegram-apps/sdk';
+import { init, isTMA, User, InitData, retrieveLaunchParams,  } from '@telegram-apps/sdk';
 
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
 import { useTelegramTheme } from 'hooks/telegram/useTelegramTheme';
@@ -92,11 +92,13 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
         }
 
         try {
-            // Вариант 1: Используем новую версию SDK (@telegram-apps/sdk)
-            const tg = init();
+            // Инициализация SDK
+            init();
+
+            const { tgWebAppData: initData } = retrieveLaunchParams();
             
             // Сохраняем объект для совместимости
-            setTelegram(tg as unknown as InitData);
+            setTelegram(initData as InitData);
             setErrMsg((current) => `${current}+init tg`);
             
             // Получаем данные пользователя

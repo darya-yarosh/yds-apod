@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { init, isTMA } from '@telegram-apps/sdk';
+import { isTMA, retrieveLaunchParams } from '@telegram-apps/sdk';
 
 import { TUseTelegramPlatform } from './types';
 
@@ -9,9 +9,9 @@ export const useTelegramPlatform: TUseTelegramPlatform = () => {
 
     useEffect(() => {
         if (isTMA()) {
-            const tg = init();
+            const { tgWebAppData: initData } = retrieveLaunchParams();
 
-            const currentPlatform = (tg as any)?.platform || "unknown";
+            const currentPlatform = (initData as any)?.platform || "unknown";
             setPlatform(currentPlatform);
         }
     }, []);
