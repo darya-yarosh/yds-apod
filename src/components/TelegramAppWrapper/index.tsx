@@ -1,39 +1,9 @@
-// src/components/TelegramAppWrapper.jsx
-import React, { useEffect } from 'react';
-
-import { themeParams } from '@telegram-apps/sdk';
 import { useTelegram } from 'components/TelegramProvider';
+
 import { TTelegramAppWrapper } from './types';
 
 const TelegramAppWrapper: TTelegramAppWrapper = ({ children }) => {
     const { isReady, isTMA } = useTelegram();
-    const [theme, setTheme] = React.useState('light');
-
-    useEffect(() => {
-        if (isTMA && isReady) {
-            // Настройка темы
-            // if (tgThemeParams.isSupported()) {
-            const currentTheme = themeParams;
-            if (!currentTheme) {
-                return;
-            }
-
-            setTheme(currentTheme.isDark() ? 'dark' : 'light');
-            // Подписываемся на изменения темы
-            // currentTheme.on('change', (newTheme: any) => {
-            //     setTheme(newTheme.isDark ? 'dark' : 'light');
-            // });
-            // }
-        }
-    }, [isTMA, isReady]);
-
-    // Применяем стили в зависимости от темы
-    useEffect(() => {
-        if (isTMA) {
-            document.body.classList.toggle('dark-theme', theme === 'dark');
-            document.body.classList.toggle('light-theme', theme === 'light');
-        }
-    }, [theme, isTMA]);
 
     if (isTMA && !isReady) {
         return (
@@ -45,7 +15,7 @@ const TelegramAppWrapper: TTelegramAppWrapper = ({ children }) => {
     }
 
     return (
-        <div className={`telegram-app ${theme}-theme`}>
+        <div className={`telegram-app`}>
             {children}
         </div>
     );

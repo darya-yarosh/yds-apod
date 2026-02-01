@@ -59,6 +59,10 @@ export const TelegramProvider: React.FC<TelegramProviderProps> = ({ children }) 
         root.style.setProperty('--tg-theme-button-text-color', themeParams.button_text_color);
         root.style.setProperty('--tg-theme-secondary-bg-color', themeParams.secondary_bg_color);
         
+        if (!theme) {
+            return;
+        }
+        
         // Также добавляем переменные для isDark
         root.style.setProperty('--tg-theme-is-dark', theme === "dark" ? '1' : '0');
         
