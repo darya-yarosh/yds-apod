@@ -191,12 +191,22 @@ export default function Header() {
             return null;
         }
 
+        const onClick = async () => {
+            await updFavourites(tgFavourites+".")
+        }
+
         return (
             <section className="Header_tgUser">
                 <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
                 <span className={developerClassName}>{`⭐ ${tgFavourites}`}</span>
-                <button className={developerClassName} type="button" onClick={() => updFavourites(tgFavourites+".")}>{"Test favourites"}</button>
+                <button 
+                    className={developerClassName} 
+                    type="button" 
+                    onClick={onClick}
+                >
+                    {"Test favourites"}
+                </button>
                 <span className={developerClassName}>{`TgStorage: stringify`}</span>
                 <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
                 <span className={developerClassName}>{JSON.stringify(testCS)}</span>
