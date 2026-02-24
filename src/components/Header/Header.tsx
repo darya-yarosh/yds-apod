@@ -58,17 +58,17 @@ export default function Header() {
 
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
 
-    const updFavourites = useCallback(async (favouritesData: string) => {
+    const updFavourites = useCallback(async () => {
         if (cloudStorage.isSupported()) {
             const dataFromStorage = await cloudStorage.getItem("favourites");
             setTgFavourites(dataFromStorage);
 
             if (!dataFromStorage) {
-                await cloudStorage.setItem("favourites", favouritesData);
+                await cloudStorage.setItem("favourites", "");
                 return;
             }
 
-            await cloudStorage.setItem("favourites", `${dataFromStorage}/${favouritesData}`);
+            await cloudStorage.setItem("favourites", "");
         }
     }, []);
 
@@ -160,13 +160,6 @@ export default function Header() {
         return !isUserDeveloper ? "forDeveloper" : "";
     }, [isUserDeveloper]);
 
-    const [testText, setTestText] = useState("text");
-
-    const onClick = useCallback(async () => {
-        setTestText((current) => current+".");
-        await updFavourites(testText);
-    }, [testText, updFavourites]);
-
     const renderTgUser = useCallback(() => {
         if (!TGUserInfo) {
             return null;
@@ -180,14 +173,14 @@ export default function Header() {
                 <button 
                     className={developerClassName} 
                     type="button" 
-                    onClick={onClick}
+                    onClick={updFavourites}
                 >
-                    {"Test favourites"}
+                    {"Clear favorites"}
                 </button>
                 <span className={developerClassName}>{JSON.stringify(testCS)}</span>
             </section>
         )
-    }, [TGUserInfo, tgFavourites, developerClassName, testCS, onClick]);
+    }, [TGUserInfo, tgFavourites, developerClassName, testCS, updFavourites]);
 
     const renderBurgerButton = useCallback(() => {
         return (
