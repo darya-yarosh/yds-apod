@@ -146,6 +146,18 @@ export default function Header() {
         );
     }, [isDate, isPeriod, optionsValue, onNavigate]);
 
+    const isUserDeveloper = useMemo(() => {
+        if (!TGUserInfo) {
+            return false;
+        }  
+
+        return TGUserInfo?.username === "GurimuSagi";
+    }, [TGUserInfo]);
+
+    const developerClassName = useMemo(() => {
+        return !isUserDeveloper ? "forDeveloper" : "";
+    }, [isUserDeveloper]);
+
     const renderTgUser = useCallback(() => {
         if (!TGUserInfo) {
             return null;
