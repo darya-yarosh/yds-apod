@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
+import { cloudStorage } from "@telegram-apps/sdk";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
@@ -67,6 +68,57 @@ export default function DatePage() {
         );
     }, [data]);
 
+    const [favorites, setFavorites] = useState<TOrNull<Array<string>>>(null);
+
+    const getFavorites = useCallback(async () => {
+        if (!cloudStorage.isSupported()) {
+            return null;
+        }
+
+        const result = await cloudStorage.getItem("favourites");
+        if (!result) {
+            setFavorites([]);
+        } else if (Array.isArray(result)) {
+            setFavorites(JSON.parse(result));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (favorites === null) {
+            getFavorites();
+        }
+    }, [favorites, getFavorites]);
+
+    const isActive = useMemo(() => {
+        if (!favorites || favorites.length === 0) {
+            return false;
+        }
+
+        return !!favorites.find((el) => el === selectedDate);
+    }, [favorites, selectedDate]);
+
+    const changeFavorite = useCallback(async () => {
+        if (!favorites) {
+            return;
+        }
+
+        if (isActive) {
+            await cloudStorage.setItem("favourites", JSON.stringify(favorites.filter((el) => el !== selectedDate)))
+        } else {
+            await cloudStorage.setItem("favourites", JSON.stringify([...favorites, selectedDate]))
+        }
+
+        await getFavorites();
+    }, [favorites, getFavorites, isActive, selectedDate]);
+
+    const renderFavouriteButton = useCallback(() => {
+        const star = isActive ? '🌟' : '⭐';
+
+        return (
+            <span className="FavoriteButton" onClick={changeFavorite}>{`${star} Add favorite`}</span>
+        );
+    }, [isActive, changeFavorite]);
+
     const renderContent = useCallback(() => {
         if (isLoading) {
             return <Loader  />;
@@ -75,12 +127,15 @@ export default function DatePage() {
         return (
             <div className="DatePage_body">
                 <div className="SelectedDateInfo">
+                    {renderFavouriteButton()}
                     <section className="Date_PictureInfo">
                         {renderMedia()}
                     </section>
                     <section className="Date_TextInfo">
                         <header>
-                            <h1 className="Date_title">{data?.title}</h1>
+                            <h1 className="Date_title">
+                                {data?.title}
+                            </h1>
                             <h2 className="Date_copyright">{data?.copyright}</h2>
                         </header>
                         <p className="Date_explanation">{data?.explanation}</p>
@@ -95,7 +150,7 @@ export default function DatePage() {
                 </div>
             </div>
         );
-    }, [isLoading, data, weekData, renderMedia]);
+    }, [isLoading, data, weekData, renderMedia, renderFavouriteButton]);
 
     /**
      * Handlers

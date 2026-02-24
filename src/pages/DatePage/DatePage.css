@@ -1,3 +1,9 @@
+.FavoriteButton {
+    font-size: 28px;
+    margin-bottom: -24px;
+    margin-top: -24px;
+}
+
 .DatePage_wrapper {
     height: 100%;
     display: flex;
