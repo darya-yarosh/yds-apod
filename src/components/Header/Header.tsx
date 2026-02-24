@@ -75,7 +75,7 @@ export default function Header() {
                     setTgFavourites(currentFavourites);
                 }
                 
-                cloudStorage.setItem("favourites", favouritesData);
+                await cloudStorage.setItem("favourites", favouritesData);
             }
 
         } catch {}
@@ -200,6 +200,7 @@ export default function Header() {
                 <span className={developerClassName}>{`TgStorage: stringify`}</span>
                 <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
                 <span className={developerClassName}>{JSON.stringify(testCS)}</span>
+                <span className={developerClassName}>{`${cloudStorage.isSupported()}`}</span>
             </section>
         )
     }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, testCS, updFavourites]);
