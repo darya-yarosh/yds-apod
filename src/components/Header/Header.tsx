@@ -75,31 +75,11 @@ export default function Header() {
                     setTgFavourites(currentFavourites);
                 }
                 
-                TGCloudStorage.setItem("favourites", favouritesData);
+                cloudStorage.setItem("favourites", favouritesData);
             }
 
         } catch {}
-
-        // try {
-        //     if (!TGCloudStorage) {
-        //         return;
-        //     }
-            
-        //     let currentFavourites = tgFavourites;
-            
-        //     if (!currentFavourites) {
-        //         currentFavourites = await TGCloudStorage.getItem("favourites");
-                
-        //         if (!currentFavourites) {
-        //             return;
-        //         }
-                
-        //         setTgFavourites(currentFavourites);
-        //     }
-            
-        //     TGCloudStorage.setItem("favourites", favouritesData);
-        // } catch {}
-    }, [TGCloudStorage, tgFavourites]);
+    }, [tgFavourites]);
 
     useEffect(() => {
         updFavourites("123");
