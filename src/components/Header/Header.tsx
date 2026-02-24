@@ -186,13 +186,16 @@ export default function Header() {
         return !isUserDeveloper ? "forDeveloper" : "";
     }, [isUserDeveloper]);
 
+    const [testText, setTestText] = useState("text");
+
+    const onClick = useCallback(async () => {
+        setTestText((current) => current+".");
+        await updFavourites(testText);
+    }, [testText, updFavourites]);
+
     const renderTgUser = useCallback(() => {
         if (!TGUserInfo) {
             return null;
-        }
-
-        const onClick = async () => {
-            await updFavourites(tgFavourites+".")
         }
 
         return (
@@ -208,12 +211,13 @@ export default function Header() {
                     {"Test favourites"}
                 </button>
                 <span className={developerClassName}>{`TgStorage: stringify`}</span>
+                <span className={developerClassName}>{testText}</span>
                 <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
                 <span className={developerClassName}>{JSON.stringify(testCS)}</span>
                 <span className={developerClassName}>{`${cloudStorage.isSupported()}`}</span>
             </section>
         )
-    }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, testCS, updFavourites]);
+    }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, testCS, testText, onClick]);
 
     const renderBurgerButton = useCallback(() => {
         return (
