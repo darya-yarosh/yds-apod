@@ -9,13 +9,15 @@ interface PictureGridProps {
     cellHeight: number,
     cellWidth: number,
     gap?: number,
+    onClick?: (date: string) => void;
 }
 
 export default function PictureGrid({
     dates,
     cellHeight,
     cellWidth,
-    gap = 16
+    gap = 16,
+    onClick
 }: PictureGridProps) {
     return (
         <div className="PictureGrid_wrapper">
@@ -25,7 +27,7 @@ export default function PictureGrid({
                     dateInfo={date}
                     height={cellHeight}
                     width={cellWidth}
-                    onClick={() => { }}
+                    onClick={onClick}
                 />
             )}
         </div>

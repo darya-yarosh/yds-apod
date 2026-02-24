@@ -10,7 +10,7 @@ interface PictureGridCellProps {
     dateInfo: AstroPicData,
     height: number,
     width: number,
-    onClick: (date: string) => void,
+    onClick?: (date: string) => void,
 }
 
 export default function PictureGridCell({
@@ -26,7 +26,6 @@ export default function PictureGridCell({
         : getVideoThumbnail(dateInfo.url);
 
     return <div className="PictureGridCell_wrapper">
-
         <Picture
             src={mediaSrc}
             alt={`Image of ${dateInfo.title} for ${dateInfo.date}`}
@@ -36,7 +35,16 @@ export default function PictureGridCell({
             onClick={() => navigate(`/date/${dateInfo.date}`)}
         />
 
-
+        <span 
+            className='PictureGridCell_favoriteBtn' 
+            onClick={() => 
+                onClick 
+                ? onClick(dateInfo.date) 
+                : null
+            }
+        >
+            {"⭐"}
+        </span>
     </div>
 }
 

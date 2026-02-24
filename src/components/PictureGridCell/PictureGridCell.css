@@ -1,5 +1,76 @@
 .PictureGridCell_wrapper {
+    position: relative;
+
     display: flex;
     flex-direction: row;
     max-width: fit-content;
+}
+
+.PictureGridCell_favoriteBtn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    cursor: pointer;
+    animation: show 2s forwards;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+}
+
+.PictureGridCell_favoriteBtn:hover {
+    animation: show 2s forwards 1, shake 0.3s ease-out 1;
+}
+
+@keyframes shake {
+    0% {
+        rotate: 0deg;
+        top: 8px;
+    }
+
+    25% {
+        rotate: -30deg;
+        top: 10px;
+    }
+
+    50% {
+        rotate: 0deg;
+        top: 8px;
+    }
+
+    75% {
+        rotate: 30deg;
+        top: 10px;
+    }
+
+    100% {
+        top: 8px;
+        rotate: 0deg;
+    }
+
+    /* 50% {
+        rotate: -30deg;
+    }
+
+    60% {
+        rotate: 0deg;
+    }
+
+    70% {
+        rotate: 30deg;
+    }
+
+    80% {
+        rotate: 0deg;
+    }
+
+    90% {
+        rotate: -30deg;
+    }
+
+    100% {
+        rotate: 0deg;
+    } */
 }
