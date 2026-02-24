@@ -9,7 +9,6 @@ import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverte
 import { TOrNull } from 'models/TOrNull';
 
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
-import { useTelegramCloudStorage } from 'hooks/telegram/useTelegramCloudStorage';
 
 import './Header.css';
 import { cloudStorage } from '@telegram-apps/sdk';
@@ -41,7 +40,6 @@ export default function Header() {
     ], []);
 
     const TGUserInfo = useTelegramUser();
-    const TGCloudStorage = useTelegramCloudStorage();
 
     const [testCS, setTestCs] = useState<TOrNull<Array<string>>>(null);
     const getTestCS = useCallback(async () => {
@@ -73,23 +71,6 @@ export default function Header() {
             await cloudStorage.setItem("favourites", `${dataFromStorage}/${favouritesData}`);
         }
     }, []);
-
-    useEffect(() => {
-        updFavourites("123");
-    }, [updFavourites]);
-
-    const [tgStorage, setTgStorage] = useState(null);
-    const updTgStorage = useCallback(async () => {
-        if (!TGCloudStorage) {
-            return;
-        }
-        
-        const res = await TGCloudStorage.storage;
-        setTgStorage(res);
-    }, [TGCloudStorage]);
-    useEffect(() => {
-        updTgStorage();
-    })
 
     // Обработчик изменения размера окна
     useEffect(() => {
@@ -203,14 +184,10 @@ export default function Header() {
                 >
                     {"Test favourites"}
                 </button>
-                <span className={developerClassName}>{`TgStorage: stringify`}</span>
-                <span className={developerClassName}>{testText}</span>
-                <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
                 <span className={developerClassName}>{JSON.stringify(testCS)}</span>
-                <span className={developerClassName}>{`${cloudStorage.isSupported()}`}</span>
             </section>
         )
-    }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, testCS, testText, onClick]);
+    }, [TGUserInfo, tgFavourites, developerClassName, testCS, onClick]);
 
     const renderBurgerButton = useCallback(() => {
         return (
