@@ -12,6 +12,7 @@ import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
 import { useTelegramCloudStorage } from 'hooks/telegram/useTelegramCloudStorage';
 
 import './Header.css';
+import { cloudStorage } from '@telegram-apps/sdk';
 
 export default function Header() {
     const navigate = useNavigate();
@@ -41,6 +42,17 @@ export default function Header() {
 
     const TGUserInfo = useTelegramUser();
     const TGCloudStorage = useTelegramCloudStorage();
+
+    const [testCS, setTestCs] = useState<TOrNull<Array<string>>>(null);
+    const getTestCS = useCallback(async () => {
+        if (cloudStorage.isSupported()) {
+            const res = await cloudStorage.getKeys();
+
+            if (res) {
+                setTestCs(res);
+            }
+        }
+    }, []);
 
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
 
@@ -184,9 +196,10 @@ export default function Header() {
                 <button className={developerClassName} type="button" onClick={() => updFavourites(tgFavourites+".")}>{"Test favourites"}</button>
                 <span className={developerClassName}>{`TgStorage: stringify`}</span>
                 <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
+                <span className={developerClassName}>{testCS}</span>
             </section>
         )
-    }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, updFavourites]);
+    }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, testCS, updFavourites]);
 
     const renderBurgerButton = useCallback(() => {
         return (
