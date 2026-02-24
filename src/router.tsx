@@ -8,6 +8,7 @@ import DatePage from 'pages/DatePage/DatePage';
 import PeriodPage from 'pages/PeriodPage/PeriodPage';
 import MainPage from 'pages/MainPage/MainPage';
 import ErrorPage from 'pages/ErrorPage/ErrorPage';
+import FavoritesPage from 'pages/FavoritesPage/FavoritesPage';
 
 import PageWrapper from 'layout/PageWrapper';
 
@@ -37,6 +38,13 @@ export const router = createBrowserRouter(
 			<Route
 				path="period/:period"
 				element={<PeriodPage />}
+				errorElement={
+					<ErrorPage />
+				}
+			/>,
+			<Route
+				path="favorites"
+				element={<FavoritesPage />}
 				errorElement={
 					<ErrorPage />
 				}
