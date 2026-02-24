@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { cloudStorage } from "@telegram-apps/sdk";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
+
+import { useFavoritesData } from "hooks/telegram/useFavoritesData";
 
 import Video from "components/Video/Video";
 import Loader from "components/Loader/Loader";
@@ -68,26 +69,7 @@ export default function DatePage() {
         );
     }, [data]);
 
-    const [favorites, setFavorites] = useState<TOrNull<Array<string>>>(null);
-
-    const getFavorites = useCallback(async () => {
-        if (!cloudStorage.isSupported()) {
-            return null;
-        }
-
-        const result = await cloudStorage.getItem("favourites");
-        if (!result) {
-            setFavorites([]);
-        } else if (Array.isArray(result)) {
-            setFavorites(JSON.parse(result));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (favorites === null) {
-            getFavorites();
-        }
-    }, [favorites, getFavorites]);
+    const { favorites, update} = useFavoritesData();
 
     const isActive = useMemo(() => {
         if (!favorites || favorites.length === 0) {
@@ -103,21 +85,22 @@ export default function DatePage() {
         }
 
         if (isActive) {
-            await cloudStorage.setItem("favourites", JSON.stringify(favorites.filter((el) => el !== selectedDate)))
+            await update(favorites.filter((el) => el !== selectedDate));
         } else {
-            await cloudStorage.setItem("favourites", JSON.stringify([...favorites, selectedDate]))
+            await update([...favorites, selectedDate]);
         }
-
-        await getFavorites();
-    }, [favorites, getFavorites, isActive, selectedDate]);
+    }, [favorites, isActive, selectedDate, update]);
 
     const renderFavouriteButton = useCallback(() => {
         const star = isActive ? '🌟' : '⭐';
 
         return (
-            <span className="FavoriteButton" onClick={changeFavorite}>{`${star} Add favorite`}</span>
+            <>
+                <span>{favorites?.join(".")}</span>
+                <span className="FavoriteButton" onClick={changeFavorite}>{`${star} Add favorite`}</span>
+            </>
         );
-    }, [isActive, changeFavorite]);
+    }, [favorites, isActive, changeFavorite]);
 
     const renderContent = useCallback(() => {
         if (isLoading) {
