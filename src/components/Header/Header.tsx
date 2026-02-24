@@ -70,6 +70,19 @@ export default function Header() {
         updFavourites("123");
     }, [updFavourites]);
 
+    const [tgStorage, setTgStorage] = useState(null);
+    const updTgStorage = useCallback(async () => {
+        if (!TGCloudStorage) {
+            return;
+        }
+        
+        const res = await TGCloudStorage.storage;
+        setTgStorage(res);
+    }, [TGCloudStorage]);
+    useEffect(() => {
+        updTgStorage();
+    })
+
     // Обработчик изменения размера окна
     useEffect(() => {
         const handleResize = () => {
@@ -167,10 +180,13 @@ export default function Header() {
             <section className="Header_tgUser">
                 <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
-                <span>{`⭐ ${tgFavourites}`}</span>
+                <span className={developerClassName}>{`⭐ ${tgFavourites}`}</span>
+                <button className={developerClassName} type="button" onClick={() => updFavourites(tgFavourites+".")}>{"Test favourites"}</button>
+                <span className={developerClassName}>{`TgStorage: stringify`}</span>
+                <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
             </section>
         )
-    }, [TGUserInfo, tgFavourites]);
+    }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, updFavourites]);
 
     const renderBurgerButton = useCallback(() => {
         return (
