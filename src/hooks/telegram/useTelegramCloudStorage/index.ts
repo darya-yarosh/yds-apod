@@ -9,36 +9,33 @@ export const useTelegramCloudStorage: TUseTelegramCloudStorage = () => {
 
     useEffect(() => {
         if (isTMA()) {
+            const windowCloudStorage = (window as any)?.Telegram?.WebApp?.CloudStorage;
             if (cloudStorage) {
                 setStorage(cloudStorage);
+            } else if (windowCloudStorage) {
+                setStorage(windowCloudStorage)
             }
         }
     }, []);
 
     const setItem = useCallback(async (key: string, value: string): Promise<void> => {
-        if (isTMA()) {
-            if (cloudStorage) {
-                await cloudStorage.setItem(key, value);
-            }
+        if (storage) {
+            await storage.setItem(key, value);
         }
-    }, []);
+    }, [storage]);
 
     const getItem = useCallback(async (key: string): Promise<string | null> => {
-        if (isTMA()) {
-            if (cloudStorage) {
-                return await cloudStorage.getItem(key);
-            }
+        if (storage) {
+            return await storage.getItem(key);
         }
         return null;
-    }, []);
+    }, [storage]);
 
     const removeItem = useCallback(async (key: string): Promise<void> => {
-        if (isTMA() && cloudStorage.isSupported()) {
-            if (cloudStorage) {
-                await cloudStorage.deleteItem(key);
-            }
+        if (storage) {
+            await storage.deleteItem(key);
         }
-    }, []);
+    }, [storage]);
 
     return {
         storage,
