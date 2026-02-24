@@ -54,28 +54,51 @@ export default function Header() {
         }
     }, []);
 
+    useEffect(() => {
+        getTestCS();
+    }, [getTestCS]);
+
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
 
     const updFavourites = useCallback(async (favouritesData: string) => {
         try {
-            if (!TGCloudStorage) {
-                return;
-            }
-            
-            let currentFavourites = tgFavourites;
-            
-            if (!currentFavourites) {
-                currentFavourites = await TGCloudStorage.getItem("favourites");
+            if (cloudStorage.isSupported()) {
+                let currentFavourites = tgFavourites;
                 
                 if (!currentFavourites) {
-                    return;
+                    currentFavourites = await cloudStorage.getItem("favourites");
+                    
+                    if (!currentFavourites) {
+                        return;
+                    }
+                    
+                    setTgFavourites(currentFavourites);
                 }
                 
-                setTgFavourites(currentFavourites);
+                TGCloudStorage.setItem("favourites", favouritesData);
             }
-            
-            TGCloudStorage.setItem("favourites", favouritesData);
+
         } catch {}
+
+        // try {
+        //     if (!TGCloudStorage) {
+        //         return;
+        //     }
+            
+        //     let currentFavourites = tgFavourites;
+            
+        //     if (!currentFavourites) {
+        //         currentFavourites = await TGCloudStorage.getItem("favourites");
+                
+        //         if (!currentFavourites) {
+        //             return;
+        //         }
+                
+        //         setTgFavourites(currentFavourites);
+        //     }
+            
+        //     TGCloudStorage.setItem("favourites", favouritesData);
+        // } catch {}
     }, [TGCloudStorage, tgFavourites]);
 
     useEffect(() => {
@@ -196,7 +219,7 @@ export default function Header() {
                 <button className={developerClassName} type="button" onClick={() => updFavourites(tgFavourites+".")}>{"Test favourites"}</button>
                 <span className={developerClassName}>{`TgStorage: stringify`}</span>
                 <span className={developerClassName}>{`${JSON.stringify(tgStorage)}`}</span>
-                <span className={developerClassName}>{testCS}</span>
+                <span className={developerClassName}>{JSON.stringify(testCS)}</span>
             </section>
         )
     }, [TGUserInfo, tgFavourites, developerClassName, tgStorage, testCS, updFavourites]);
