@@ -61,25 +61,18 @@ export default function Header() {
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
 
     const updFavourites = useCallback(async (favouritesData: string) => {
-        try {
-            if (cloudStorage.isSupported()) {
-                let currentFavourites = tgFavourites;
-                
-                if (!currentFavourites) {
-                    currentFavourites = await cloudStorage.getItem("favourites");
-                    
-                    if (!currentFavourites) {
-                        return;
-                    }
-                    
-                    setTgFavourites(currentFavourites);
-                }
-                
+        if (cloudStorage.isSupported()) {
+            const dataFromStorage = await cloudStorage.getItem("favourites");
+            setTgFavourites(dataFromStorage);
+
+            if (!dataFromStorage) {
                 await cloudStorage.setItem("favourites", favouritesData);
+                return;
             }
 
-        } catch {}
-    }, [tgFavourites]);
+            await cloudStorage.setItem("favourites", `${dataFromStorage}/${favouritesData}`);
+        }
+    }, []);
 
     useEffect(() => {
         updFavourites("123");
