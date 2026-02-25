@@ -9,8 +9,6 @@ import PictureGrid from "components/PictureGrid/PictureGrid";
 
 import { useFavoritesData } from "hooks/telegram/useFavoritesData";
 
-import { goToCorrectPeriod } from "pages/PeriodPage/utils";
-
 import ApiController from "logic/storage/ApiController";
 import {
     checkIsPeriodCorrect,
@@ -96,7 +94,6 @@ export default function FavoritesPage() {
         );
 
         if (!isCorrectPeriod) {
-            goToCorrectPeriod(formattedPeriod, navigate)
             return;
         }
 
@@ -191,10 +188,27 @@ export default function FavoritesPage() {
         handleInit
     ]);
 
+    let tPeriod = useMemo(() => {
+        const formattedPeriod = (
+            currentPeriod
+                ?.split('-')
+                .map(stringDate => stringDate.replaceAll('.', '-'))
+            ) || ['0000-00-00', '0000-00-00'];
+
+        const isCorrectPeriod = checkIsPeriodCorrect(
+            [
+                new Date(formattedPeriod[0]),
+                new Date(formattedPeriod[1])
+            ]
+        );
+        return isCorrectPeriod;
+    }, [currentPeriod]);
+
     return (
         <div className="PeriodPage_wrapper">
             <span>{JSON.stringify(favorites)}</span>
             <span>{currentPeriod}</span>
+            <span>{tPeriod}</span>
             {renderContent()}
         </div>
     );
