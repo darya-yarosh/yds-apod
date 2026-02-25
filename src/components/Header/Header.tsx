@@ -9,6 +9,7 @@ import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverte
 import { TOrNull } from 'models/TOrNull';
 
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
+import { FAVORITES_KEY } from 'hooks/telegram/useFavoritesData/constants';
 
 import './Header.css';
 import { cloudStorage } from '@telegram-apps/sdk';
@@ -58,17 +59,10 @@ export default function Header() {
 
     const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
 
-    const updFavourites = useCallback(async () => {
+    const reloadFavorites = useCallback(async () => {
         if (cloudStorage.isSupported()) {
-            const dataFromStorage = await cloudStorage.getItem("favourites");
+            const dataFromStorage = await cloudStorage.getItem(FAVORITES_KEY);
             setTgFavourites(dataFromStorage);
-
-            if (!dataFromStorage) {
-                await cloudStorage.setItem("favourites", "");
-                return;
-            }
-
-            await cloudStorage.setItem("favourites", "");
         }
     }, []);
 
@@ -173,14 +167,14 @@ export default function Header() {
                 <button 
                     className={developerClassName} 
                     type="button" 
-                    onClick={updFavourites}
+                    onClick={reloadFavorites}
                 >
-                    {"Clear favorites"}
+                    {"Reload favorites"}
                 </button>
                 <span className={developerClassName}>{JSON.stringify(testCS)}</span>
             </section>
         )
-    }, [TGUserInfo, developerClassName, tgFavourites, testCS, updFavourites, navigate]);
+    }, [TGUserInfo, developerClassName, tgFavourites, testCS, reloadFavorites, navigate]);
 
     const renderBurgerButton = useCallback(() => {
         return (
