@@ -1,7 +1,60 @@
-.FavoriteButton {
+.FavoriteButton_wrapper {
+    display: flex;
+    gap: 8px;
+    width: fit-content;
     font-size: 28px;
+    margin: auto;
     margin-bottom: -24px;
     margin-top: -24px;
+    cursor: pointer;
+    animation: show 2s forwards;
+    z-index: 99;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+}
+
+.FavoriteButton_label {
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.3s;
+}
+
+.FavoriteButton_wrapper:hover>.FavoriteButton_label {
+    border-bottom: 1px solid black;
+}
+
+.FavoriteButton_wrapper:hover>.FavoriteButton_star {
+    animation: shake 0.3s ease-out 1;
+}
+
+@keyframes shake {
+    0% {
+        rotate: 0deg;
+        top: 8px;
+    }
+
+    25% {
+        rotate: -30deg;
+        top: 10px;
+    }
+
+    50% {
+        rotate: 0deg;
+        top: 8px;
+    }
+
+    75% {
+        rotate: 30deg;
+        top: 10px;
+    }
+
+    100% {
+        top: 8px;
+        rotate: 0deg;
+    }
 }
 
 .DatePage_wrapper {

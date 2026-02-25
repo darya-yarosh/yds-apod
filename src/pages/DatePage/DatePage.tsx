@@ -92,8 +92,11 @@ export default function DatePage() {
 
         return (
             <>
-                <span>{favorites?.join(".")}</span>
-                <span className="FavoriteButton" onClick={changeFavorite}>{`${star} Add favorite`}</span>
+                <span>{favorites?.join("")}</span>
+                <div className="FavoriteButton_wrapper" onClick={changeFavorite}>
+                    <span className="FavoriteButton_star">{`${star}`}</span> 
+                    <span className="FavoriteButton_label">{`Add favorite`}</span>
+                </div>
             </>
         );
     }, [favorites, isActive, changeFavorite]);
