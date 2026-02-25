@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { TOrNull } from "models/TOrNull";
@@ -52,7 +52,10 @@ export default function FavoritesPage() {
      */
     const renderContent = useCallback(() => {
         if (isLoading) {
-            return <Loader />;
+            return <>
+                <Loader />;
+                <span>{JSON.stringify(favorites)}</span>
+            </>
         }
 
         if (!dataList) {
@@ -74,7 +77,7 @@ export default function FavoritesPage() {
                 />
             </div>
         );
-    }, [isLoading, dataList, removeFavorite]);
+    }, [isLoading, dataList, favorites, removeFavorite]);
 
     /**
      * Handlers
@@ -142,9 +145,9 @@ export default function FavoritesPage() {
         setIsLoading(false);
     }, [isLoading, handleGetPeriod]);
 
-    useEffect(() => {
+    const currentPeriod = useMemo(() => {
         if (!favorites) {
-            return;
+            return null;
         }
 
         let minDate: TOrNull<string> = null;
@@ -166,7 +169,14 @@ export default function FavoritesPage() {
                 maxDate = element;
             }
         })
-        const currentPeriod = `${minDate}-${maxDate}`;
+        
+        return `${minDate}-${maxDate}`;
+    }, [favorites]);
+
+    useEffect(() => {
+        if (!currentPeriod) {
+            return;
+        }
 
         const isDataNotLoaded = selectedPeriod && dataList === null;
         const isPeriodUpdated = selectedPeriod !== currentPeriod;
@@ -176,7 +186,7 @@ export default function FavoritesPage() {
             handleInit(currentPeriod)
         }
     }, [
-        favorites,
+        currentPeriod,
         dataList,
         selectedPeriod,
         handleInit
@@ -184,6 +194,7 @@ export default function FavoritesPage() {
 
     return (
         <div className="PeriodPage_wrapper">
+            <span></span>
             {renderContent()}
         </div>
     );
