@@ -72,7 +72,7 @@ export default function DatePage() {
     const { favorites, update} = useFavoritesData();
 
     const isActive = useMemo(() => {
-        if (!favorites || favorites.length === 0) {
+        if (favorites === null || favorites.length === 0) {
             return false;
         }
 
@@ -80,14 +80,10 @@ export default function DatePage() {
     }, [favorites, selectedDate]);
 
     const changeFavorite = useCallback(async () => {
-        if (!favorites) {
-            return;
-        }
-
         if (isActive) {
-            await update(favorites.filter((el) => el !== selectedDate));
+            await update((favorites || []).filter((el) => el !== selectedDate));
         } else {
-            await update([...favorites, selectedDate]);
+            await update([...(favorites || []), selectedDate]);
         }
     }, [favorites, isActive, selectedDate, update]);
 
