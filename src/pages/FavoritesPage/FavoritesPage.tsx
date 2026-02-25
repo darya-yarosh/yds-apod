@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
@@ -20,7 +20,6 @@ import './FavoritesPage.css';
 
 export default function FavoritesPage() {
     const navigate = useNavigate();
-    const params = useParams();
 
     /**
      * State
@@ -30,7 +29,7 @@ export default function FavoritesPage() {
     const [dataList, setDataList] = useState<TOrNull<Array<AstroPicData>>>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [selectedPeriod, setSelectedPeriod] = useState(params.period || "");
+    const [selectedPeriod, setSelectedPeriod] = useState("");
 
     /**
      * Handlers
@@ -174,7 +173,7 @@ export default function FavoritesPage() {
     }, [favorites]);
 
     useEffect(() => {
-        if (!currentPeriod) {
+        if (!currentPeriod || !selectedPeriod) {
             return;
         }
 
@@ -194,7 +193,8 @@ export default function FavoritesPage() {
 
     return (
         <div className="PeriodPage_wrapper">
-            <span></span>
+            <span>{JSON.stringify(favorites)}</span>
+            <span>{currentPeriod}</span>
             {renderContent()}
         </div>
     );
