@@ -54,26 +54,31 @@ export default function FavoritesPage() {
             return <Loader />;
         }
 
-        if (!dataList) {
-            return <span>{"Something went wrong."}</span>;
-        }
+        const showGrid = !(
+            !dataList
+            || (!favorites || favorites.length === 0)
+        );
 
         return (
             <div className="PeriodPage_body">
                 <header>
                     <h1>
-                        Hover over the image and click to go to the full picture description page.
+                        {!dataList && "Something went wrong"}
+                        {(!favorites || favorites.length === 0) && "List is empty"}
+                        {showGrid && "Favorite pictures"}
                     </h1>
                 </header>
-                <PictureGrid
-                    dates={dataList}
-                    cellHeight={128}
-                    cellWidth={128}
-                    onClick={removeFavorite}
-                />
+                {showGrid && 
+                    <PictureGrid
+                        dates={dataList}
+                        cellHeight={128}
+                        cellWidth={128}
+                        onClick={removeFavorite}
+                    />
+                }
             </div>
         );
-    }, [isLoading, dataList, removeFavorite]);
+    }, [isLoading, dataList, favorites, removeFavorite]);
 
     /**
      * Handlers
@@ -181,7 +186,7 @@ export default function FavoritesPage() {
         const isDataNotLoaded = selectedPeriod && dataList === null;
         const isPeriodUpdated = selectedPeriod !== currentPeriod;
 
-        if ((isDataNotLoaded || isPeriodUpdated) && currentPeriod) {
+        if ((isDataNotLoaded || isPeriodUpdated) && currentPeriod && (dataList === null || dataList?.length === 0)) {
             setSelectedPeriod(currentPeriod);
             handleInit(currentPeriod)
         }
