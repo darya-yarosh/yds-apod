@@ -130,7 +130,7 @@ export default function FavoritesPage() {
                     });
                 }
             });
-    }, [navigate]);
+    }, [favorites, navigate]);
 
     const handleInit = useCallback(async (period: string) => {
         if (isLoading) {
