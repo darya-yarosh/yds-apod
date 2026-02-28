@@ -1,8 +1,11 @@
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
 import { AstroPicData } from 'models/astroPicData';
 
 import Picture from 'components/Picture/Picture';
+
+import { useFavoritesData } from 'hooks/telegram/useFavoritesData';
 
 import './PictureGridCell.css';
 
@@ -21,11 +24,44 @@ export default function PictureGridCell({
     showFavoriteButton,
     onClick
 }: PictureGridCellProps) {
-    const navigate = useNavigate();
+    /**
+     * Default state
+    */
+   const navigate = useNavigate();
+   
+   const mediaSrc = dateInfo.media_type === "image"
+   ? dateInfo.url
+   : getVideoThumbnail(dateInfo.url);
 
-    const mediaSrc = dateInfo.media_type === "image"
-        ? dateInfo.url
-        : getVideoThumbnail(dateInfo.url);
+   /**
+    * Telegram state
+    */
+   const { favorites, update} = useFavoritesData();
+
+   /**
+    * Handlers
+    */
+    const handleToggleFavorite = useCallback(async () => {
+        if (onClick) {
+            onClick(dateInfo.date) 
+            return;
+        }
+
+        if (!favorites) {
+            return;
+        }
+        
+        const isActive = favorites?.find((el) => el === dateInfo.date)
+        if (isActive) {
+            await update(favorites.filter((el) => el !== dateInfo.date));
+        } else {
+            await update([...favorites, dateInfo.date]);
+        }
+    }, [dateInfo.date, favorites, onClick, update])
+
+    const onNavigateToDatePhoto = useCallback(() => 
+        navigate(`/date/${dateInfo.date}`)
+    , [dateInfo.date, navigate]);
 
     return <div className="PictureGridCell_wrapper">
         <Picture
@@ -34,16 +70,12 @@ export default function PictureGridCell({
             height={height}
             width={width}
             isCover={true}
-            onClick={() => navigate(`/date/${dateInfo.date}`)}
+            onClick={onNavigateToDatePhoto}
         />
 
         {showFavoriteButton && <span 
             className='PictureGridCell_favoriteBtn' 
-            onClick={() => 
-                onClick 
-                ? onClick(dateInfo.date) 
-                : null
-            }
+            onClick={handleToggleFavorite}
         >
             {"⭐"}
         </span>}
