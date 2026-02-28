@@ -65,7 +65,7 @@ export default function FavoritesPage() {
                     <h1>
                         {(!dataList && favorites && favorites.length > 0) && "Something went wrong"}
                         {(!favorites || favorites.length === 0) && "List is empty"}
-                        {showGrid && "Favorite pictures"}
+                        {showGrid && "Favorite photos"}
                     </h1>
                 </header>
                 {showGrid && 
