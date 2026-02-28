@@ -85,15 +85,14 @@ export default function PictureGridCell({
             >
                 <Picture
                     src={isActive ? favoriteOn : favoriteOff}
-                    alt={`Image of ${dateInfo.title} for ${dateInfo.date}`}
+                    alt={`Toggle favorite-state of current date - ${dateInfo.date}, ${dateInfo.title}`}
                     height={15}
                     width={15}
                     isCover={true}
-                    onClick={onNavigateToDatePhoto}
                 />
             </span>
         );
-    }, [dateInfo.date, dateInfo.title, favorites, handleToggleFavorite, onNavigateToDatePhoto, showStar]);
+    }, [dateInfo.date, dateInfo.title, favorites, handleToggleFavorite, showStar]);
 
     return (
         <div className="PictureGridCell_wrapper">
