@@ -163,7 +163,7 @@ export default function Header() {
             <section className="Header_tgUser">
                 <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
-                <span className={developerClassName} onClick={() => navigate("/favorites")}>{`⭐ ${tgFavourites}`}</span>
+                <span className={developerClassName} onClick={() => navigate("/favorites")}>{`⭐ Favorites`}</span>
                 <button 
                     className={developerClassName} 
                     type="button" 
@@ -171,10 +171,9 @@ export default function Header() {
                 >
                     {"Reload favorites"}
                 </button>
-                <span className={developerClassName}>{JSON.stringify(testCS)}</span>
             </section>
         )
-    }, [TGUserInfo, developerClassName, tgFavourites, testCS, reloadFavorites, navigate]);
+    }, [TGUserInfo, developerClassName, reloadFavorites, navigate]);
 
     const renderBurgerButton = useCallback(() => {
         return (
