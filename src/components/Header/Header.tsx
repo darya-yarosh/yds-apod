@@ -6,14 +6,10 @@ import StatePeriod from 'components/StatePeriod/StatePeriod';
 
 import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverter';
 
-import { TOrNull } from 'models/TOrNull';
-
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
-import { FAVORITES_KEY } from 'hooks/telegram/useFavoritesData/constants';
 import { useDeveloperClassName } from 'hooks/telegram/useDeveloperClassname';
 
 import './Header.css';
-import { cloudStorage } from '@telegram-apps/sdk';
 
 export default function Header() {
     const navigate = useNavigate();
@@ -42,30 +38,6 @@ export default function Header() {
     ], []);
 
     const TGUserInfo = useTelegramUser();
-
-    const [testCS, setTestCs] = useState<TOrNull<Array<string>>>(null);
-    const getTestCS = useCallback(async () => {
-        if (cloudStorage.isSupported()) {
-            const res = await cloudStorage.getKeys();
-
-            if (res) {
-                setTestCs(res);
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        getTestCS();
-    }, [getTestCS]);
-
-    const [tgFavourites, setTgFavourites] = useState<TOrNull<string>>(null);
-
-    const reloadFavorites = useCallback(async () => {
-        if (cloudStorage.isSupported()) {
-            const dataFromStorage = await cloudStorage.getItem(FAVORITES_KEY);
-            setTgFavourites(dataFromStorage);
-        }
-    }, []);
 
     // Обработчик изменения размера окна
     useEffect(() => {
@@ -155,16 +127,9 @@ export default function Header() {
                 <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
                 <span className={developerClassName} onClick={() => navigate("/favorites")}>{`⭐ Favorites`}</span>
-                <button 
-                    className={developerClassName} 
-                    type="button" 
-                    onClick={reloadFavorites}
-                >
-                    {"Reload favorites"}
-                </button>
             </section>
         )
-    }, [TGUserInfo, developerClassName, reloadFavorites, navigate]);
+    }, [TGUserInfo, developerClassName, navigate]);
 
     const renderBurgerButton = useCallback(() => {
         return (
