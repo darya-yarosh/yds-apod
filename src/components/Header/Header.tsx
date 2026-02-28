@@ -7,7 +7,6 @@ import StatePeriod from 'components/StatePeriod/StatePeriod';
 import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverter';
 
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
-import { useDeveloperClassName } from 'hooks/telegram/useDeveloperClassname';
 
 import './Header.css';
 
@@ -69,7 +68,16 @@ export default function Header() {
         setIsMenuOpen((current) => !current);
     }, []);
 
+    const navigateToFavorites = useCallback(() => {
+        navigate("/favorites");
+        toggleMenu();
+    }, [navigate, toggleMenu]);
+
     const renderState = useCallback(() => {
+        if (!isDate && !isPeriod) {
+            return null;
+        }
+
         return (
             <section className="Header_state">
                 {isDate &&
@@ -115,8 +123,6 @@ export default function Header() {
         );
     }, [isDate, isPeriod, optionsValue, onNavigate]);
 
-    const developerClassName = useDeveloperClassName();
-
     const renderTgUser = useCallback(() => {
         if (!TGUserInfo) {
             return null;
@@ -126,10 +132,10 @@ export default function Header() {
             <section className="Header_tgUser">
                 <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
-                <span className={developerClassName} onClick={() => navigate("/favorites")}>{`⭐ Favorites`}</span>
+                <span onClick={navigateToFavorites}>{`⭐ Favorites`}</span>
             </section>
         )
-    }, [TGUserInfo, developerClassName, navigate]);
+    }, [TGUserInfo, navigateToFavorites]);
 
     const renderBurgerButton = useCallback(() => {
         return (
