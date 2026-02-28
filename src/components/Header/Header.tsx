@@ -111,12 +111,12 @@ export default function Header() {
 
     const renderTitle = useCallback(() => {
         return (
-            <section className="Header_appName">
+            <section className="Header_appName" onClick={() => navigate("/")}>
                 <span>ASTRONOMY</span>
                 <span>PICTURE OF THE DAY</span>
             </section>
         )
-    }, []);
+    }, [navigate]);
 
     const renderPagesSelector = useCallback(() => {
         return (
