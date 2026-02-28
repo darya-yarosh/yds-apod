@@ -98,12 +98,10 @@ export default function FavoritesPage() {
         }
 
         await ApiController.getPeriodData(new Date(formattedPeriod[0]), new Date(formattedPeriod[1]))
-            .then(
-                loadedWeekData => {
-                    setDataList(loadedWeekData);
-                    setIsLoading(false);
-                }
-            )
+            .then((loadedWeekData) => {
+                setDataList(loadedWeekData);
+                setIsLoading(false);
+            })
             .catch((error) => {
                 const { message } = error;
                 const errorCode = message ? message.split(":")[0] : null;
@@ -201,7 +199,7 @@ export default function FavoritesPage() {
                 new Date(formattedPeriod[1])
             ]
         );
-        return isCorrectPeriod;
+        return `${isCorrectPeriod}<-[${new Date(formattedPeriod[0])}, ${new Date(formattedPeriod[1])}]<-${formattedPeriod}<-${currentPeriod}`;
     }, [currentPeriod]);
 
     return (
