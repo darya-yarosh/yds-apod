@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { isTMA } from "@telegram-apps/sdk";
 
+import favoriteOn from "assets/favorite-on.svg";
+import favoriteOff from "assets/favorite-off.svg";
+
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
 
@@ -93,12 +96,18 @@ export default function DatePage() {
             return null;
         }
 
-        const star = isActive ? '🌟' : '⭐';
-
         return (
             <>
                 <div className="FavoriteButton_wrapper" onClick={changeFavorite}>
-                    <span className="FavoriteButton_star">{`${star}`}</span> 
+                    <span className="FavoriteButton_star">
+                        <Picture
+                            src={isActive ? favoriteOn : favoriteOff}
+                            alt={`Image of appending date to favorites list`}
+                            height={15}
+                            width={15}
+                            isCover={true}
+                        />
+                    </span> 
                     <span className="FavoriteButton_label">{`Add favorite`}</span>
                 </div>
             </>
