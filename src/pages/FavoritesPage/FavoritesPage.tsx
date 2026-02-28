@@ -163,8 +163,12 @@ export default function FavoritesPage() {
                 maxDate = element;
             }
         })
-        
-        return `${minDate}-${maxDate}`;
+
+        if (typeof minDate === "string" && typeof maxDate === "string") {
+            return `${(minDate as string).replaceAll("-", ".")}-${(maxDate as string).replaceAll("-", ".")}`;
+        }
+
+        return null;
     }, [favorites]);
 
     useEffect(() => {
@@ -199,7 +203,12 @@ export default function FavoritesPage() {
                 new Date(formattedPeriod[1])
             ]
         );
-        return `${isCorrectPeriod}<-[${new Date(formattedPeriod[0])}, ${new Date(formattedPeriod[1])}]<-${formattedPeriod}<-${currentPeriod}`;
+        return `
+        ${isCorrectPeriod}
+        <-[${new Date(formattedPeriod[0])}, ${new Date(formattedPeriod[1])}]
+        <-${formattedPeriod}
+        <-${currentPeriod}
+        `;
     }, [currentPeriod]);
 
     return (
