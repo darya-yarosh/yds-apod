@@ -2,6 +2,9 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { isTMA } from '@telegram-apps/sdk';
 
+import favoriteOn from "assets/favorite-on.svg";
+import favoriteOff from "assets/favorite-off.svg";
+
 import { AstroPicData } from 'models/astroPicData';
 
 import Picture from 'components/Picture/Picture';
@@ -65,6 +68,33 @@ export default function PictureGridCell({
         navigate(`/date/${dateInfo.date}`)
     , [dateInfo.date, navigate]);
 
+    /**
+     * Renders
+     */
+    const renderFavoriteButton = useCallback(() => {
+        if (!showStar) {
+            return null;
+        }
+
+        const isActive = Boolean((favorites || [])?.find((el) => el === dateInfo.date));
+
+        return (
+            <span 
+                className='PictureGridCell_favoriteBtn' 
+                onClick={handleToggleFavorite}
+            >
+                <Picture
+                    src={isActive ? favoriteOn : favoriteOff}
+                    alt={`Image of ${dateInfo.title} for ${dateInfo.date}`}
+                    height={15}
+                    width={15}
+                    isCover={true}
+                    onClick={onNavigateToDatePhoto}
+                />
+            </span>
+        );
+    }, [dateInfo.date, dateInfo.title, favorites, handleToggleFavorite, onNavigateToDatePhoto, showStar]);
+
     return (
         <div className="PictureGridCell_wrapper">
             <Picture
@@ -73,15 +103,11 @@ export default function PictureGridCell({
                 height={height}
                 width={width}
                 isCover={true}
+                withShadow={true}
                 onClick={onNavigateToDatePhoto}
             />
 
-            {showStar && <span 
-                className='PictureGridCell_favoriteBtn' 
-                onClick={handleToggleFavorite}
-            >
-                {"⭐"}
-            </span>}
+            {renderFavoriteButton()}
         </div>
     );
 }
