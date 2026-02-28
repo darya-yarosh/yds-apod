@@ -197,6 +197,12 @@ export default function FavoritesPage() {
         <div className="PeriodPage_wrapper">
             <span className={developerClassName}>{JSON.stringify(favorites)}</span>
             <span className={developerClassName}>{currentPeriod}</span>
+            <span className={developerClassName}>{JSON.stringify(dataList)}</span>
+            <span className={developerClassName}>{JSON.stringify((dataList || []).filter(
+                (data) => 
+                    favorites ? favorites.includes(data.date) : true
+                )
+            )}</span>
             {renderContent()}
         </div>
     );
