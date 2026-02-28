@@ -9,7 +9,6 @@ import Loader from "components/Loader/Loader";
 import PictureGrid from "components/PictureGrid/PictureGrid";
 
 import { useFavoritesData } from "hooks/telegram/useFavoritesData";
-import { useDeveloperClassName } from "hooks/telegram/useDeveloperClassname";
 
 import ApiController from "logic/storage/ApiController";
 import {
@@ -19,8 +18,6 @@ import {
 import './FavoritesPage.css';
 
 export default function FavoritesPage() {
-    const developerClassName = useDeveloperClassName();
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -206,8 +203,6 @@ export default function FavoritesPage() {
 
     return (
         <div className="PeriodPage_wrapper">
-            <span className={developerClassName}>{JSON.stringify(favorites)}</span>
-            <span className={developerClassName}>{currentPeriod}</span>
             {renderContent()}
         </div>
     );
