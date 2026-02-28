@@ -43,8 +43,7 @@ export default function FavoritesPage() {
         const isActive = favorites?.find((el) => el === selectedDate)
         if (isActive) {
             await update(favorites.filter((el) => el !== selectedDate));
-        } else {
-            await update([...favorites, selectedDate]);
+            setDataList((current) => (current || []).filter(el => el.date !== selectedDate));
         }
     }, [favorites, update]);
     /**
