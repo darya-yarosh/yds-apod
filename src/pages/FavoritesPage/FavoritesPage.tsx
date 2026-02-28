@@ -63,7 +63,7 @@ export default function FavoritesPage() {
             <div className="PeriodPage_body">
                 <header>
                     <h1>
-                        {!dataList && "Something went wrong"}
+                        {(!dataList && favorites && favorites.length > 0) && "Something went wrong"}
                         {(!favorites || favorites.length === 0) && "List is empty"}
                         {showGrid && "Favorite pictures"}
                     </h1>
