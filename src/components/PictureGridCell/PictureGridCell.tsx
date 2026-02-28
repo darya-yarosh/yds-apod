@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { isTMA } from '@telegram-apps/sdk';
 
 import { AstroPicData } from 'models/astroPicData';
 
@@ -37,12 +38,12 @@ export default function PictureGridCell({
     * Telegram state
     */
    const { favorites, update} = useFavoritesData();
+   const showStar = useMemo(() => isTMA() && showFavoriteButton, [showFavoriteButton]);
 
    /**
     * Handlers
     */
     const handleToggleFavorite = useCallback(async () => {
-        
         if (!favorites) {
             return;
         }
@@ -64,23 +65,25 @@ export default function PictureGridCell({
         navigate(`/date/${dateInfo.date}`)
     , [dateInfo.date, navigate]);
 
-    return <div className="PictureGridCell_wrapper">
-        <Picture
-            src={mediaSrc}
-            alt={`Image of ${dateInfo.title} for ${dateInfo.date}`}
-            height={height}
-            width={width}
-            isCover={true}
-            onClick={onNavigateToDatePhoto}
-        />
+    return (
+        <div className="PictureGridCell_wrapper">
+            <Picture
+                src={mediaSrc}
+                alt={`Image of ${dateInfo.title} for ${dateInfo.date}`}
+                height={height}
+                width={width}
+                isCover={true}
+                onClick={onNavigateToDatePhoto}
+            />
 
-        {showFavoriteButton && <span 
-            className='PictureGridCell_favoriteBtn' 
-            onClick={handleToggleFavorite}
-        >
-            {"⭐"}
-        </span>}
-    </div>
+            {showStar && <span 
+                className='PictureGridCell_favoriteBtn' 
+                onClick={handleToggleFavorite}
+            >
+                {"⭐"}
+            </span>}
+        </div>
+    );
 }
 
 function getVideoThumbnail(url: string) {

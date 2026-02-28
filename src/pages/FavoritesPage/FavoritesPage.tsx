@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isTMA } from "@telegram-apps/sdk";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
@@ -21,6 +22,12 @@ export default function FavoritesPage() {
     const developerClassName = useDeveloperClassName();
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isTMA()) {
+            navigate("/");
+        }
+    }, [navigate]);
 
     /**
      * State

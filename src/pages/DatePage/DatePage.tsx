@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
+import { isTMA } from "@telegram-apps/sdk";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
@@ -88,6 +89,10 @@ export default function DatePage() {
     }, [favorites, isActive, selectedDate, update]);
 
     const renderFavouriteButton = useCallback(() => {
+        if (!isTMA()) {
+            return null;
+        }
+
         const star = isActive ? '🌟' : '⭐';
 
         return (
