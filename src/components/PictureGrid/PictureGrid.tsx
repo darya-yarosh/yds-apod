@@ -1,6 +1,5 @@
-import { AstroPicData } from 'models/astroPicData';
-
 import PictureGridCell from 'components/PictureGridCell/PictureGridCell';
+import { AstroPicData } from 'models/astroPicData';
 
 import './PictureGrid.css';
 
@@ -9,6 +8,7 @@ interface PictureGridProps {
     cellHeight: number,
     cellWidth: number,
     gap?: number,
+    showFavoriteButton: boolean;
     onClick?: (date: string) => void;
 }
 
@@ -17,7 +17,8 @@ export default function PictureGrid({
     cellHeight,
     cellWidth,
     gap = 16,
-    onClick
+    showFavoriteButton,
+    onClick,
 }: PictureGridProps) {
     return (
         <div className="PictureGrid_wrapper">
@@ -27,6 +28,7 @@ export default function PictureGrid({
                     dateInfo={date}
                     height={cellHeight}
                     width={cellWidth}
+                    showFavoriteButton={showFavoriteButton}
                     onClick={onClick}
                 />
             )}

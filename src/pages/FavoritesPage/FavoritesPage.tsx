@@ -73,6 +73,7 @@ export default function FavoritesPage() {
                         dates={dataList}
                         cellHeight={128}
                         cellWidth={128}
+                        showFavoriteButton={true}
                         onClick={removeFavorite}
                     />
                 }

@@ -10,6 +10,7 @@ interface PictureGridCellProps {
     dateInfo: AstroPicData,
     height: number,
     width: number,
+    showFavoriteButton: boolean,
     onClick?: (date: string) => void,
 }
 
@@ -17,6 +18,7 @@ export default function PictureGridCell({
     dateInfo,
     height,
     width,
+    showFavoriteButton,
     onClick
 }: PictureGridCellProps) {
     const navigate = useNavigate();
@@ -35,7 +37,7 @@ export default function PictureGridCell({
             onClick={() => navigate(`/date/${dateInfo.date}`)}
         />
 
-        <span 
+        {showFavoriteButton && <span 
             className='PictureGridCell_favoriteBtn' 
             onClick={() => 
                 onClick 
@@ -44,7 +46,7 @@ export default function PictureGridCell({
             }
         >
             {"⭐"}
-        </span>
+        </span>}
     </div>
 }
 

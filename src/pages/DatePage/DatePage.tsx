@@ -127,6 +127,7 @@ export default function DatePage() {
                         dates={weekData}
                         cellHeight={72}
                         cellWidth={72}
+                        showFavoriteButton={true}
                     />
                 </div>
             </div>

@@ -50,6 +50,7 @@ export default function PeriodPage() {
                     dates={dataList}
                     cellHeight={128}
                     cellWidth={128}
+                    showFavoriteButton={true}
                 />
             </div>
         );
