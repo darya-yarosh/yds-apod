@@ -10,6 +10,7 @@ import { TOrNull } from 'models/TOrNull';
 
 import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
 import { FAVORITES_KEY } from 'hooks/telegram/useFavoritesData/constants';
+import { useDeveloperClassName } from 'hooks/telegram/useDeveloperClassname';
 
 import './Header.css';
 import { cloudStorage } from '@telegram-apps/sdk';
@@ -142,17 +143,7 @@ export default function Header() {
         );
     }, [isDate, isPeriod, optionsValue, onNavigate]);
 
-    const isUserDeveloper = useMemo(() => {
-        if (!TGUserInfo) {
-            return false;
-        }  
-
-        return TGUserInfo?.username === "GurimuSagi";
-    }, [TGUserInfo]);
-
-    const developerClassName = useMemo(() => {
-        return !isUserDeveloper ? "forDeveloper" : "";
-    }, [isUserDeveloper]);
+    const developerClassName = useDeveloperClassName();
 
     const renderTgUser = useCallback(() => {
         if (!TGUserInfo) {
