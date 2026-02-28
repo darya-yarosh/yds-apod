@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import favoriteOn from "assets/favorite-on.svg";
+
 import StateDate from 'components/StateDate/StateDate';
 import StatePeriod from 'components/StatePeriod/StatePeriod';
+import Picture from 'components/Picture/Picture';
 
 import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverter';
 
@@ -132,7 +135,16 @@ export default function Header() {
             <section className="Header_tgUser">
                 <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
                 <span>{TGUserInfo?.username}</span>
-                <span onClick={navigateToFavorites}>{`⭐ Favorites`}</span>
+                <span className={"Header_tgUser_favoriteBtn"} onClick={navigateToFavorites}>
+                    <Picture
+                        src={favoriteOn}
+                        alt={`Image for navigation to page with favorites dates`}
+                        height={15}
+                        width={15}
+                        isCover={true}
+                    />
+                    {"Favorites"}
+                </span>
             </section>
         )
     }, [TGUserInfo, navigateToFavorites]);

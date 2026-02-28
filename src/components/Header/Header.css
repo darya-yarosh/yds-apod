@@ -109,6 +109,18 @@ input:hover {
     background-color: #1B1B1B;
 }
 
+.Header_tgUser_favoriteBtn {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.Header_tgUser_favoriteBtn:hover {
+    opacity: 0.6;
+}
+
 @media screen and (min-width: 768px) and (max-width: 1024px) {
     .Header_wrapper {
         padding: 16px;
