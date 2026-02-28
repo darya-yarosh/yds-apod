@@ -14,7 +14,7 @@ interface PictureGridCellProps {
     height: number,
     width: number,
     showFavoriteButton: boolean,
-    onClick?: (date: string) => void,
+    onAfterFavoriteToggle?: (date: string) => void,
 }
 
 export default function PictureGridCell({
@@ -22,7 +22,7 @@ export default function PictureGridCell({
     height,
     width,
     showFavoriteButton,
-    onClick
+    onAfterFavoriteToggle
 }: PictureGridCellProps) {
     /**
      * Default state
@@ -42,11 +42,7 @@ export default function PictureGridCell({
     * Handlers
     */
     const handleToggleFavorite = useCallback(async () => {
-        if (onClick) {
-            onClick(dateInfo.date) 
-            return;
-        }
-
+        
         if (!favorites) {
             return;
         }
@@ -57,7 +53,12 @@ export default function PictureGridCell({
         } else {
             await update([...favorites, dateInfo.date]);
         }
-    }, [dateInfo.date, favorites, onClick, update])
+
+        if (onAfterFavoriteToggle) {
+            onAfterFavoriteToggle(dateInfo.date) 
+            return;
+        }
+    }, [dateInfo.date, favorites, onAfterFavoriteToggle, update])
 
     const onNavigateToDatePhoto = useCallback(() => 
         navigate(`/date/${dateInfo.date}`)

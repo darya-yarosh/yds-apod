@@ -25,7 +25,7 @@ export default function FavoritesPage() {
     /**
      * State
      */
-    const { favorites, update} = useFavoritesData();
+    const { favorites } = useFavoritesData();
     
     const [dataList, setDataList] = useState<TOrNull<Array<AstroPicData>>>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -42,10 +42,9 @@ export default function FavoritesPage() {
         
         const isActive = favorites?.find((el) => el === selectedDate)
         if (isActive) {
-            await update(favorites.filter((el) => el !== selectedDate));
             setDataList((current) => (current || []).filter(el => el.date !== selectedDate));
         }
-    }, [favorites, update]);
+    }, [favorites]);
     /**
      * Renders
      */
@@ -74,7 +73,7 @@ export default function FavoritesPage() {
                         cellHeight={128}
                         cellWidth={128}
                         showFavoriteButton={true}
-                        onClick={removeFavorite}
+                        onAfterFavoriteToggle={removeFavorite}
                     />
                 }
             </div>

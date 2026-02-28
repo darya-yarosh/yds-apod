@@ -9,7 +9,7 @@ interface PictureGridProps {
     cellWidth: number,
     gap?: number,
     showFavoriteButton: boolean;
-    onClick?: (date: string) => void;
+    onAfterFavoriteToggle?: (date: string) => void;
 }
 
 export default function PictureGrid({
@@ -18,7 +18,7 @@ export default function PictureGrid({
     cellWidth,
     gap = 16,
     showFavoriteButton,
-    onClick,
+    onAfterFavoriteToggle,
 }: PictureGridProps) {
     return (
         <div className="PictureGrid_wrapper">
@@ -29,7 +29,7 @@ export default function PictureGrid({
                     height={cellHeight}
                     width={cellWidth}
                     showFavoriteButton={showFavoriteButton}
-                    onClick={onClick}
+                    onAfterFavoriteToggle={onAfterFavoriteToggle}
                 />
             )}
         </div>
