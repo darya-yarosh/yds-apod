@@ -99,7 +99,10 @@ export default function FavoritesPage() {
 
         await ApiController.getPeriodData(new Date(formattedPeriod[0]), new Date(formattedPeriod[1]))
             .then((loadedWeekData) => {
-                setDataList(loadedWeekData);
+                const filteredDataList = loadedWeekData.filter((data) => 
+                    favorites ? favorites.includes(data.date) : true
+                );
+                setDataList(filteredDataList);
                 setIsLoading(false);
             })
             .catch((error) => {
