@@ -13,6 +13,7 @@ interface PictureProps {
     isCover: boolean,
     withLazyLoading?: boolean,
     onClick?: () => void,
+    withShadow?: boolean;
 }
 
 export default function Picture({
@@ -22,6 +23,7 @@ export default function Picture({
     width,
     isCover,
     withLazyLoading = false,
+    withShadow = false,
     onClick
 }: PictureProps) {
     const ref = useRef<HTMLImageElement>(null);
@@ -84,14 +86,18 @@ export default function Picture({
         };
     }, [withLazyLoading, src, ref]);
 
+    const imgClassname = classNames(
+        "Picture_img", 
+        onClick !== undefined && "Picture_imgHovered", 
+        withShadow && "Picture_withShadow"
+    );
+
     return (
         <div className={classes}>
             <img
                 ref={ref}
                 alt={alt}
-                className={onClick !== undefined
-                    ? "Picture_img Picture_imgHovered"
-                    : "Picture_img"}
+                className={imgClassname}
                 src={initSrc}
                 onLoad={handleOnLoad}
                 style={isCover ? stylesCover : undefined}

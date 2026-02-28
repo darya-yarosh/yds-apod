@@ -46,11 +46,22 @@
     max-width: 100%;
     border-radius: 12px;
 
-    filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 0.25));
     transition: 0.25s;
 }
 
-.Picture_imgHovered:hover {
+.Picture_img:hover {
+    opacity: 0.8;
+}
+
+.Picture_withShadow {
+    filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 0.25));
+}
+
+.Picture_imgHovered {
+    cursor: pointer;
+}
+
+.Picture_withShadow:hover {
     filter: drop-shadow(8px 8px 0px rgba(0, 0, 0, 0.5));
     cursor: pointer;
 }
