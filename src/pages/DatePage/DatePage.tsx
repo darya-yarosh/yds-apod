@@ -92,14 +92,13 @@ export default function DatePage() {
 
         return (
             <>
-                <span>{favorites?.join("")}</span>
                 <div className="FavoriteButton_wrapper" onClick={changeFavorite}>
                     <span className="FavoriteButton_star">{`${star}`}</span> 
                     <span className="FavoriteButton_label">{`Add favorite`}</span>
                 </div>
             </>
         );
-    }, [favorites, isActive, changeFavorite]);
+    }, [isActive, changeFavorite]);
 
     const renderContent = useCallback(() => {
         if (isLoading) {
@@ -109,11 +108,11 @@ export default function DatePage() {
         return (
             <div className="DatePage_body">
                 <div className="SelectedDateInfo">
-                    {renderFavouriteButton()}
                     <section className="Date_PictureInfo">
                         {renderMedia()}
                     </section>
                     <section className="Date_TextInfo">
+                        {renderFavouriteButton()}
                         <header>
                             <h1 className="Date_title">
                                 {data?.title}
