@@ -49,10 +49,7 @@ export default function FavoritesPage() {
      */
     const renderContent = useCallback(() => {
         if (isLoading) {
-            return <>
-                <Loader />;
-                <span>{JSON.stringify(favorites)}</span>
-            </>
+            return <Loader />;
         }
 
         if (!dataList) {
@@ -74,7 +71,7 @@ export default function FavoritesPage() {
                 />
             </div>
         );
-    }, [isLoading, dataList, favorites, removeFavorite]);
+    }, [isLoading, dataList, removeFavorite]);
 
     /**
      * Handlers
@@ -193,32 +190,10 @@ export default function FavoritesPage() {
         handleInit
     ]);
 
-    let tPeriod = useMemo(() => {
-        const formattedPeriod = (
-            currentPeriod
-                ?.split('-')
-                .map(stringDate => stringDate.replaceAll('.', '-'))
-            ) || ['0000-00-00', '0000-00-00'];
-
-        const isCorrectPeriod = checkIsPeriodCorrect(
-            [
-                new Date(formattedPeriod[0]),
-                new Date(formattedPeriod[1])
-            ]
-        );
-        return `
-        ${isCorrectPeriod}
-        <-[${new Date(formattedPeriod[0])}, ${new Date(formattedPeriod[1])}]
-        <-${formattedPeriod}
-        <-${currentPeriod}
-        `;
-    }, [currentPeriod]);
-
     return (
         <div className="PeriodPage_wrapper">
             <span>{JSON.stringify(favorites)}</span>
             <span>{currentPeriod}</span>
-            <span>{tPeriod}</span>
             {renderContent()}
         </div>
     );
