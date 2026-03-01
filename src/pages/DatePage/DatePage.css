@@ -1,3 +1,30 @@
+@keyframes shake {
+    0% {
+        rotate: 0deg;
+        top: 8px;
+    }
+
+    25% {
+        rotate: -30deg;
+        top: 10px;
+    }
+
+    50% {
+        rotate: 0deg;
+        top: 8px;
+    }
+
+    75% {
+        rotate: 30deg;
+        top: 10px;
+    }
+
+    100% {
+        top: 8px;
+        rotate: 0deg;
+    }
+}
+
 .DatePage_wrapper {
     height: 100%;
     display: flex;
@@ -14,9 +41,41 @@
     justify-content: center;
     align-items: center;
     grid-template-areas:
+        "favorites"
         "dateInfo"
         "weekList";
     width: 100%;
+}
+
+.FavoriteButton_wrapper {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    font-size: 28px;
+    margin-bottom: -12px;
+    
+    cursor: pointer;
+    animation: show 2s forwards;
+    z-index: 99;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+}
+
+.FavoriteButton_label {
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.3s;
+}
+
+.FavoriteButton_wrapper:hover>.FavoriteButton_label {
+    border-bottom: 1px solid black;
+}
+
+.FavoriteButton_wrapper:hover>.FavoriteButton_star {
+    animation: shake 0.3s ease-out 1;
 }
 
 .SelectedDateInfo {
@@ -102,6 +161,13 @@ p {
 
     .Date_TextInfo {
         margin: 0px;
+    }
+
+    .FavoriteButton_wrapper {
+        margin-bottom: -16px;
+    }
+    .FavoriteButton_label, .FavoriteButton_star {
+        font-size: 1.2rem;
     }
 }
 

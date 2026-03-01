@@ -1,8 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
+import { isTMA } from "@telegram-apps/sdk";
+
+import favoriteOn from "assets/favorite-on.svg";
+import favoriteOff from "assets/favorite-off.svg";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
+
+import { useFavoritesData } from "hooks/telegram/useFavoritesData";
 
 import Video from "components/Video/Video";
 import Loader from "components/Loader/Loader";
@@ -67,6 +73,47 @@ export default function DatePage() {
         );
     }, [data]);
 
+    const { favorites, update} = useFavoritesData();
+
+    const isActive = useMemo(() => {
+        if (favorites === null || favorites.length === 0) {
+            return false;
+        }
+
+        return !!favorites.find((el) => el === selectedDate);
+    }, [favorites, selectedDate]);
+
+    const changeFavorite = useCallback(async () => {
+        if (isActive) {
+            await update((favorites || []).filter((el) => el !== selectedDate));
+        } else {
+            await update([...(favorites || []), selectedDate]);
+        }
+    }, [favorites, isActive, selectedDate, update]);
+
+    const renderFavouriteButton = useCallback(() => {
+        if (!isTMA()) {
+            return null;
+        }
+
+        return (
+            <>
+                <div className="FavoriteButton_wrapper" onClick={changeFavorite}>
+                    <span className="FavoriteButton_star">
+                        <Picture
+                            src={isActive ? favoriteOn : favoriteOff}
+                            alt={`Image of appending date to favorites list`}
+                            height={15}
+                            width={15}
+                            isCover={true}
+                        />
+                    </span> 
+                    <span className="FavoriteButton_label">{`Add favorite`}</span>
+                </div>
+            </>
+        );
+    }, [isActive, changeFavorite]);
+
     const renderContent = useCallback(() => {
         if (isLoading) {
             return <Loader  />;
@@ -79,8 +126,11 @@ export default function DatePage() {
                         {renderMedia()}
                     </section>
                     <section className="Date_TextInfo">
+                        {renderFavouriteButton()}
                         <header>
-                            <h1 className="Date_title">{data?.title}</h1>
+                            <h1 className="Date_title">
+                                {data?.title}
+                            </h1>
                             <h2 className="Date_copyright">{data?.copyright}</h2>
                         </header>
                         <p className="Date_explanation">{data?.explanation}</p>
@@ -91,11 +141,12 @@ export default function DatePage() {
                         dates={weekData}
                         cellHeight={72}
                         cellWidth={72}
+                        showFavoriteButton={true}
                     />
                 </div>
             </div>
         );
-    }, [isLoading, data, weekData, renderMedia]);
+    }, [isLoading, data, weekData, renderMedia, renderFavouriteButton]);
 
     /**
      * Handlers

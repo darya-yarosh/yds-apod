@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isTMA } from "@telegram-apps/sdk";
 
 import { TOrNull } from "models/TOrNull";
 import { AstroPicData } from "models/astroPicData";
@@ -7,26 +8,47 @@ import { AstroPicData } from "models/astroPicData";
 import Loader from "components/Loader/Loader";
 import PictureGrid from "components/PictureGrid/PictureGrid";
 
+import { useFavoritesData } from "hooks/telegram/useFavoritesData";
+
 import ApiController from "logic/storage/ApiController";
 import {
     checkIsPeriodCorrect,
 } from "logic/utils/dateConverter";
 
-import './PeriodPage.css';
-import { goToCorrectPeriod } from "./utils";
+import './FavoritesPage.css';
 
-export default function PeriodPage() {
+export default function FavoritesPage() {
     const navigate = useNavigate();
-    const params = useParams();
+
+    useEffect(() => {
+        if (!isTMA()) {
+            navigate("/");
+        }
+    }, [navigate]);
 
     /**
      * State
      */
+    const { favorites } = useFavoritesData();
+    
     const [dataList, setDataList] = useState<TOrNull<Array<AstroPicData>>>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [selectedPeriod, setSelectedPeriod] = useState(params.period || "");
+    const [selectedPeriod, setSelectedPeriod] = useState("");
 
+    /**
+     * Handlers
+     */
+    const removeFavorite = useCallback(async (selectedDate: string) => {
+        if (!favorites) {
+            return;
+        }
+        
+        const isActive = favorites?.find((el) => el === selectedDate)
+        if (isActive) {
+            setDataList((current) => (current || []).filter(el => el.date !== selectedDate));
+        }
+    }, [favorites]);
     /**
      * Renders
      */
@@ -35,26 +57,32 @@ export default function PeriodPage() {
             return <Loader />;
         }
 
-        if (!dataList) {
-            return <span>{"Something went wrong."}</span>;
-        }
+        const showGrid = !(
+            !dataList
+            || (!favorites || favorites.length === 0)
+        );
 
         return (
             <div className="PeriodPage_body">
                 <header>
                     <h1>
-                        Hover over the image and click to go to the full picture description page.
+                        {(!dataList && favorites && favorites.length > 0) && "Something went wrong"}
+                        {(!favorites || favorites.length === 0) && "List is empty"}
+                        {showGrid && "Favorite photos"}
                     </h1>
                 </header>
-                <PictureGrid
-                    dates={dataList}
-                    cellHeight={128}
-                    cellWidth={128}
-                    showFavoriteButton={true}
-                />
+                {showGrid && 
+                    <PictureGrid
+                        dates={dataList}
+                        cellHeight={128}
+                        cellWidth={128}
+                        showFavoriteButton={true}
+                        onAfterFavoriteToggle={removeFavorite}
+                    />
+                }
             </div>
         );
-    }, [isLoading, dataList]);
+    }, [isLoading, dataList, favorites, removeFavorite]);
 
     /**
      * Handlers
@@ -74,17 +102,17 @@ export default function PeriodPage() {
         );
 
         if (!isCorrectPeriod) {
-            goToCorrectPeriod(formattedPeriod, navigate)
             return;
         }
 
         await ApiController.getPeriodData(new Date(formattedPeriod[0]), new Date(formattedPeriod[1]))
-            .then(
-                loadedWeekData => {
-                    setDataList(loadedWeekData);
-                    setIsLoading(false);
-                }
-            )
+            .then((loadedWeekData) => {
+                const filteredDataList = loadedWeekData.filter((data) => 
+                    favorites ? favorites.includes(data.date) : true
+                );
+                setDataList(filteredDataList);
+                setIsLoading(false);
+            })
             .catch((error) => {
                 const { message } = error;
                 const errorCode = message ? message.split(":")[0] : null;
@@ -110,7 +138,7 @@ export default function PeriodPage() {
                     });
                 }
             });
-    }, [navigate]);
+    }, [favorites, navigate]);
 
     const handleInit = useCallback(async (period: string) => {
         if (isLoading) {
@@ -122,18 +150,52 @@ export default function PeriodPage() {
         setIsLoading(false);
     }, [isLoading, handleGetPeriod]);
 
+    const currentPeriod = useMemo(() => {
+        if (!favorites) {
+            return null;
+        }
+
+        let minDate: TOrNull<string> = null;
+        let maxDate: TOrNull<string> = null;
+        favorites.forEach((element) => {
+            if (!minDate) {
+                minDate = element;
+            }
+
+            if (!maxDate) {
+                maxDate = element;
+            }
+
+            if (new Date(element).getTime() < new Date(minDate).getTime()) {
+                minDate = element;
+            }
+
+            if (new Date(element).getTime() > new Date(maxDate).getTime()) {
+                maxDate = element;
+            }
+        })
+
+        if (typeof minDate === "string" && typeof maxDate === "string") {
+            return `${(minDate as string).replaceAll("-", ".")}-${(maxDate as string).replaceAll("-", ".")}`;
+        }
+
+        return null;
+    }, [favorites]);
+
     useEffect(() => {
-        const currentPeriod = params.period;
+        if (!currentPeriod) {
+            return;
+        }
 
         const isDataNotLoaded = selectedPeriod && dataList === null;
         const isPeriodUpdated = selectedPeriod !== currentPeriod;
 
-        if ((isDataNotLoaded || isPeriodUpdated) && currentPeriod) {
+        if ((isDataNotLoaded || isPeriodUpdated) && currentPeriod && (dataList === null || dataList?.length === 0)) {
             setSelectedPeriod(currentPeriod);
             handleInit(currentPeriod)
         }
     }, [
-        params,
+        currentPeriod,
         dataList,
         selectedPeriod,
         handleInit

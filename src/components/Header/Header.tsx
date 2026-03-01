@@ -1,9 +1,15 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import favoriteOn from "assets/favorite-on.svg";
 
 import StateDate from 'components/StateDate/StateDate';
 import StatePeriod from 'components/StatePeriod/StatePeriod';
+import Picture from 'components/Picture/Picture';
 
 import { convertDateToYYYYMMDD, getTodayUTCDate } from 'logic/utils/dateConverter';
+
+import { useTelegramUser } from 'hooks/telegram/useTelegramUser';
 
 import './Header.css';
 
@@ -14,12 +20,15 @@ export default function Header() {
     const isDate = params.date !== undefined;
     const isPeriod = params.period !== undefined;
 
-    function onNavigate(event: React.ChangeEvent<HTMLSelectElement>) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    const onNavigate = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
         const pageAddress = event.target.value;
         navigate(pageAddress);
-    }
+    }, [navigate]);
 
-    const optionsValue = [
+    const optionsValue = useMemo(() => [
         [
             `/date/${convertDateToYYYYMMDD(getTodayUTCDate(), '-')}`,
             'Single'
@@ -28,39 +37,158 @@ export default function Header() {
             `/period/${convertDateToYYYYMMDD(getTodayUTCDate(), '.')}-${convertDateToYYYYMMDD(getTodayUTCDate(), '.')}`,
             'Period'
         ]
-    ]
+    ], []);
 
-    return <header className="Header_wrapper">
-        <section className="Header_state">
-            {isDate &&
-                <StateDate />
+    const TGUserInfo = useTelegramUser();
+
+    // Обработчик изменения размера окна
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+            if (window.innerWidth >= 768) {
+                setIsMenuOpen(false); // На десктопе закрываем меню
             }
-            {isPeriod &&
-                <StatePeriod />
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Закрытие меню при клике вне его области
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (isMenuOpen && !target.closest('.Header_burgerMenu') && !target.closest('.Header_burgerButton')) {
+                setIsMenuOpen(false);
             }
-        </section>
-        <section className="Header_appName">
-            <span>ASTRONOMY</span>
-            <span>PICTURE OF THE DAY</span>
-        </section>
-        <section className="Header_pagesSelector">
-            {(isDate || isPeriod) &&
-                <>
-                    <label>Date: </label>
-                    <select
-                        title='Page'
-                        onChange={onNavigate}
-                        value={
-                            isDate
-                                ? optionsValue[0][0]
-                                : optionsValue[1][0]
-                        }
-                    >
-                        <option value={optionsValue[0][0]}>{optionsValue[0][1]}</option>
-                        <option value={optionsValue[1][0]}>{optionsValue[1][1]}</option>
-                    </select>
-                </>
-            }
-        </section>
-    </header >
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isMenuOpen]);
+
+    const toggleMenu = useCallback(() => {
+        setIsMenuOpen((current) => !current);
+    }, []);
+
+    const navigateToFavorites = useCallback(() => {
+        navigate("/favorites");
+        toggleMenu();
+    }, [navigate, toggleMenu]);
+
+    const renderState = useCallback(() => {
+        if (!isDate && !isPeriod) {
+            return null;
+        }
+
+        return (
+            <section className="Header_state">
+                {isDate &&
+                    <StateDate />
+                }
+                {isPeriod &&
+                    <StatePeriod />
+                }
+            </section>
+        );
+    }, [isDate, isPeriod]);
+
+    const renderTitle = useCallback(() => {
+        return (
+            <section className="Header_appName" onClick={() => navigate("/")}>
+                <span>ASTRONOMY</span>
+                <span>PICTURE OF THE DAY</span>
+            </section>
+        )
+    }, [navigate]);
+
+    const renderPagesSelector = useCallback(() => {
+        return (
+            <section className="Header_pagesSelector">
+                {(isDate || isPeriod) &&
+                    <>
+                        <label>Date: </label>
+                        <select
+                            title='Page'
+                            onChange={onNavigate}
+                            value={
+                                isDate
+                                    ? optionsValue[0][0]
+                                    : optionsValue[1][0]
+                            }
+                        >
+                            <option value={optionsValue[0][0]}>{optionsValue[0][1]}</option>
+                            <option value={optionsValue[1][0]}>{optionsValue[1][1]}</option>
+                        </select>
+                    </>
+                }
+            </section>
+        );
+    }, [isDate, isPeriod, optionsValue, onNavigate]);
+
+    const renderTgUser = useCallback(() => {
+        if (!TGUserInfo) {
+            return null;
+        }
+
+        return (
+            <section className="Header_tgUser">
+                <span>{`Hello, ${TGUserInfo?.first_name} ${TGUserInfo?.last_name}`}</span>
+                <span>{TGUserInfo?.username}</span>
+                <span className={"Header_tgUser_favoriteBtn"} onClick={navigateToFavorites}>
+                    <Picture
+                        src={favoriteOn}
+                        alt={`Image for navigation to page with favorites dates`}
+                        height={15}
+                        width={15}
+                        isCover={true}
+                    />
+                    {"Favorites"}
+                </span>
+            </section>
+        )
+    }, [TGUserInfo, navigateToFavorites]);
+
+    const renderBurgerButton = useCallback(() => {
+        return (
+            <button 
+                className="Header_burgerButton"
+                onClick={toggleMenu}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            >
+                <span className={`Header_burgerLine ${isMenuOpen ? 'Header_burgerLine--top' : ''}`}></span>
+                <span className={`Header_burgerLine ${isMenuOpen ? 'Header_burgerLine--middle' : ''}`}></span>
+                <span className={`Header_burgerLine ${isMenuOpen ? 'Header_burgerLine--bottom' : ''}`}></span>
+            </button>
+        );
+    }, [isMenuOpen, toggleMenu]);
+
+    const renderMobileMenu = useCallback(() => {
+        return (
+            <div className={`Header_burgerMenu ${isMenuOpen ? 'Header_burgerMenu--open' : ''}`}>
+                <div className="Header_burgerMenuContent">
+                    {renderPagesSelector()}
+                    {renderState()}
+                    {renderTgUser()}
+                </div>
+            </div>
+        );
+    }, [isMenuOpen, renderState, renderPagesSelector, renderTgUser]);
+    
+    return (
+        <header className="Header_wrapper">
+            {renderTitle()}
+
+            {renderBurgerButton()}
+            {renderMobileMenu()}
+            
+            {/* Overlay для мобильного меню */}
+            {isMobile && isMenuOpen && (
+                <div 
+                    className="Header_menuOverlay"
+                    onClick={() => setIsMenuOpen(false)}
+                />
+            )}
+        </header>
+    );
 }
